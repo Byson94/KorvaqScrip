@@ -1,4 +1,4 @@
-MIT License (modified)
+Korvaq License
 
 Copyright (c) 2024 Byson94
 
@@ -9,13 +9,11 @@ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 of the Software, and to permit persons to whom the Software
 is furnished to do so, subject to the following conditions:
 
-1. The above copyright notice and this permission notice shall be included in all copies
-or substantial portions of the Software.
+1. If you use the source code of the language's interpreter in your project,
+you must include the copyright notice and permission notice in all copies and credit
+the Korvaq language at least once in any of your documentation.
 
-2. If you use the source code of the language's interpreter in your project,
-you must credit the Korvaq language at least once in any documentation.
-
-3. This language is free to use and distribute files made using it,
+2. This language is free to use and distribute files made using it,
 but the entire language cannot be sold.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
