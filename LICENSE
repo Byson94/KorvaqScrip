@@ -13,8 +13,13 @@ is furnished to do so, subject to the following conditions:
 you must include the copyright notice and permission notice in all copies and credit
 the Korvaq language at least once in any of your documentation.
 
-2. This language is free to use and distribute files made using it,
-but the entire language cannot be sold.
+2. This language is free to use and distribute files made using it. However,
+you cannot take the entire Korvaq project and sell or distribute it as your own
+without making modifications. If you do make modifications to the source code,
+you may then distribute the modified version.
+
+3. You can freely distribute projects made with the Korvaq language,
+even if you have not modified the source code.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
