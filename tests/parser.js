@@ -14,6 +14,8 @@ class Parser {
                 statements.push(this.parseFunctionDeclaration());
             } else if (this.currentToken.type === TokenType.If) {
                 statements.push(this.parseIfStatement());
+            } else if (this.currentToken.type === TokenType.DeleteVar) {
+                statements.push(this.deleteVarStatement());
             } else if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
                 statements.push(this.parseVariableDeclaration());
             } else if (this.currentToken.type === TokenType.Show) {
@@ -39,6 +41,16 @@ class Parser {
         }
         throw new Error(`Expected token type ${tokenType}, but found ${token ? token.type : 'none'}`);
     }
+
+    deleteVarStatement() {
+        console.log('will this work!?')
+        this.expect(TokenType.DeleteVar); // Expect the delete token
+        const identifier = this.expect(TokenType.Identifier); // Expect the variable name to delete
+        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
+            this.expect(TokenType.Semicolon); // Consume the semicolon if present
+        }
+        return { type: 'DeleteVariable', name: identifier.value }; // Return a DeleteVariable statement node
+    }    
 
     parseFunctionDeclaration() {
         this.expect(TokenType.Func); // Ensure we see the 'func' token
@@ -70,6 +82,8 @@ class Parser {
     parseStatement() {
         if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
             return this.parseVariableDeclaration();
+        } else if (this.currentToken.type === TokenType.DeleteVar) {
+            return this.deleteVarStatement();
         } else if (this.currentToken.type === TokenType.Show) {
             return this.parsePrintStatement();
         } else if (this.currentToken.type === TokenType.If) {

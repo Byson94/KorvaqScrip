@@ -72,6 +72,9 @@ class Interpreter {
             case 'FunctionCall':
                 this.executeFunctionCall(statement);  // Handle function call
                 break;
+            case 'DeleteVariable': // Handle the delete variable statement
+                this.handleDeleteVariable(statement);
+                break;
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
@@ -107,6 +110,23 @@ class Interpreter {
         this.variables[statement.name] = value;
     }
     
+    handleDeleteVariable(statement) {
+        const varName = statement.name;
+        
+        // Check if the variable exists
+        if (!this.variables.hasOwnProperty(varName)) {
+            throw new Error(`Variable "${varName}" is not defined.`);
+        }
+        
+        // Check if the variable is immutable
+        if (this.immutables.has(varName)) {
+            throw new Error(`Variable "${varName}" is immutable and cannot be deleted.`);
+        }
+        
+        // Delete the variable from the variables object
+        delete this.variables[varName];
+        console.log(this.variables[varName])
+    }
     
     // Add a new method to access elements in an array
     getArrayElement(arrayName, index) {

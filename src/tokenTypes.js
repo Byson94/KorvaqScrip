@@ -9,8 +9,8 @@ const TokenType = {
     CloseParen: 'CloseParen',
     OpenBrace: 'OpenBrace',
     CloseBrace: 'CloseBrace',
-    OpenBracket: 'OpenBracket', // Add this line for '['
-    CloseBracket: 'CloseBracket', // Add this line for ']'
+    OpenBracket: 'OpenBracket',
+    CloseBracket: 'CloseBracket',
     Equals: 'Equals',
     Identifier: 'Identifier',
     Number: 'Number',
@@ -20,7 +20,8 @@ const TokenType = {
     Func: 'Func',
     Return: 'Return',
     Comma: 'Comma',
-    Boolean: 'Boolean' // Ensure this is present for boolean literals
+    Boolean: 'Boolean',
+    DeleteVar: 'DeleteVar',
 };
 
 export default TokenType;

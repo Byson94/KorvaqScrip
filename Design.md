@@ -7,6 +7,14 @@ make example = 5;
 example = 5;
 ```
 
+## Deleting variables
+```
+x = 7;
+delvar x; // Variable now removed!
+
+show x; // Output: Variable "x" is not defined.
+```
+
 ## Showing information
 ```
 show('Hey');
@@ -26,6 +34,6 @@ If (example == 5) {
 function greet(txt) {
     show txt
 }
-```
 
 greet("Hey!")
+```

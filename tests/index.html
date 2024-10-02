@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KorvaqScript Interpreter</title>
+    <title>Test Interpreter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -74,49 +74,34 @@
             word-wrap: break-word; /* Handle long words */
         }
     </style>
-    <script src="https://unpkg.com/monaco-editor/min/vs/loader.js"></script>
+</head>
+<body>
+    <div id="container">
+        <h1>Test Interpreter</h1>
+        <div id="editorContainer"></div> <!-- Placeholder for the editor -->
+        <button id="runButton"><i class="fas fa-play"></i> Run</button>
+        <h2>Output:</h2>
+        <pre id="output"></pre>
+    </div>
+
+    <!-- Script 1: Interpreter Logic -->
     <script>
-        let editor; // Declare editor variable in a broader scope
         let Lexer, Parser, Interpreter; // Declare these variables
 
         async function loadModules() {
             // Import the necessary modules
-            const module = await import('./lexer.js');
-            Lexer = module.default; // Assuming you export the class as default
+            const lexerModule = await import('./lexer.js');
+            Lexer = lexerModule.default;
 
             const parserModule = await import('./parser.js');
-            Parser = parserModule.default; // Assuming you export the class as default
+            Parser = parserModule.default;
 
             const interpreterModule = await import('./interpreter.js');
-            Interpreter = interpreterModule.default; // Assuming you export the class as default
-        }
-
-        function createMonacoEditor() {
-            require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor/min/vs' }});
-            require(['vs/editor/editor.main'], function() {
-                editor = monaco.editor.create(document.getElementById('editor'), {
-                    value: 'show("Hello, World!");',
-                    language: 'javascript',
-                    theme: 'vs-dark'
-                });
-            });
-        }
-
-        async function initializeEditor() {
-            const isOnline = navigator.onLine;
-            const editorContainer = document.getElementById('editorContainer');
-
-            if (isOnline) {
-                editorContainer.innerHTML = '<div id="editor"></div>';
-                createMonacoEditor();
-            } else {
-                editorContainer.innerHTML = '<textarea id="defaultEditor">show("Hello, World!");</textarea>';
-            }
-            await loadModules(); // Load the necessary modules
+            Interpreter = interpreterModule.default;
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await initializeEditor();
+            await loadModules();
 
             const runButton = document.getElementById('runButton');
             runButton.onclick = async function() {
@@ -150,14 +135,88 @@
             };
         });
     </script>
-</head>
-<body>
-    <div id="container">
-        <h1>Testing Interpreter</h1>
-        <div id="editorContainer"></div> <!-- Placeholder for the editor -->
-        <button id="runButton"><i class="fas fa-play"></i> Run</button>
-        <h2>Output:</h2>
-        <pre id="output"></pre>
-    </div>
+
+    <!-- Script 2: Monaco Editor and KorvaqScrip Syntax -->
+    <script src="https://unpkg.com/monaco-editor/min/vs/loader.js"></script>
+    <script>
+        let editor; // Declare editor variable in a broader scope
+
+        function createMonacoEditor() {
+            require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+                editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: 'show("Hello, World!");',
+                    language: 'korvaqscrip',
+                    theme: 'vs-dark'
+                });
+                defineKorvaqScripLanguage(monaco);
+            });
+        }
+
+        async function initializeEditor() {
+            const isOnline = navigator.onLine;
+            const editorContainer = document.getElementById('editorContainer');
+
+            if (isOnline) {
+                editorContainer.innerHTML = '<div id="editor"></div>';
+                createMonacoEditor();
+            } else {
+                editorContainer.innerHTML = '<textarea id="defaultEditor">show("Hello, World!");</textarea>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeEditor();
+        });
+
+        // Define custom language syntax for KorvaqScrip
+        function defineKorvaqScripLanguage(monaco) {
+            monaco.languages.register({ id: 'korvaqscrip' });
+
+            monaco.languages.setMonarchTokensProvider('korvaqscrip', {
+                tokenizer: {
+                    root: [
+                        // keywords for KorvaqScrip (you can add more)
+                        [/let|make|func|if|else|loop|return|show/, 'keyword'],
+
+                        // operators
+                        [/[=><!~?:&|+\-*\/%]+/, 'operator'],
+
+                        // numbers
+                        [/\b\d+(\.\d+)?\b/, 'number'],
+
+                        // strings
+                        [/\".*?\"/, 'string'],
+
+                        // comments
+                        [/\/\/.*$/, 'comment'],
+
+                        // parentheses and brackets
+                        [/[{}()\[\]]/, '@brackets'],
+                    ]
+                }
+            });
+
+            monaco.languages.setLanguageConfiguration('korvaqscrip', {
+                brackets: [
+                    ['{', '}'],
+                    ['[', ']'],
+                    ['(', ')']
+                ],
+                autoClosingPairs: [
+                    { open: '{', close: '}' },
+                    { open: '[', close: ']' },
+                    { open: '(', close: ')' },
+                    { open: '"', close: '"' }
+                ],
+                surroundingPairs: [
+                    { open: '{', close: '}' },
+                    { open: '[', close: ']' },
+                    { open: '(', close: ')' },
+                    { open: '"', close: '"' }
+                ]
+            });
+        }
+    </script>
 </body>
 </html>

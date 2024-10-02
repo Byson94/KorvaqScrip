@@ -13,6 +13,7 @@ A programming language that is simple to learn and easy to use due to its simple
 2. [Variable Declarations](#variable-declarations)
    - [Mutable Variables](#mutable-variables)
    - [Immutable Variables](#immutable-variables)
+   - [Delete Variables](#delete-variables)
 3. [Data Types](#data-types)
    - [Numbers](#numbers)
    - [Strings](#strings)
@@ -45,12 +46,24 @@ x = 10; // x is now 10
 ```
 
 ### Immutable Variables
-Immutable variables are declared using the `make` keyword. Once assigned, these variables cannot be changed.
+Immutable variables are declared using the `make` keyword. Once assigned, these variables cannot be changed or be deleted.
 
 **Example**:
 ```korvaq
 make y = 3;
-// y = 4; // This will result in an error
+
+y = 4; // This will result in an error
+```
+
+### Deleting Variables
+Everytime you declare a variable it is stored in memory. If variables are not removed from memory, it may lead to memory leaks and other issues. We can delete variables using the `delvar` keyword to delete variables after using them. **(NOTE: You cannot delete Immutable variables as told earlier!)**
+
+**Example**:
+```korvaq
+let x = 21;
+delvar x; // Deletes the variable
+
+show x; // This will result in an error
 ```
 
 ## Data Types

@@ -105,6 +105,8 @@ class Lexer {
         }
     
         switch (idStr) {
+            case 'delvar': 
+                return { value: idStr, type: TokenType.DeleteVar };
             case 'func':
                 return { value: idStr, type: TokenType.Func };
             case 'return':
