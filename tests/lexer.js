@@ -15,33 +15,43 @@ class Lexer {
                 continue;
             }
 
+            // Check for single-line comments
             if (currentChar === '/') {
                 if (this.input[this.pos + 1] === '/') {
                     while (this.pos < this.input.length && this.input[this.pos] !== '\n') {
                         this.pos++;
                     }
-                    this.pos++;
+                    this.pos++; // Move past the newline
                     continue;
                 }
             }
 
+            // Check for boolean literals first
+            if (this.input.startsWith('true', this.pos)) {
+                this.pos += 4; // Move position past "true"
+                return { value: true, type: TokenType.Boolean };
+            }
+            if (this.input.startsWith('false', this.pos)) {
+                this.pos += 5; // Move position past "false"
+                return { value: false, type: TokenType.Boolean };
+            }
+
+            // Check for numbers, strings, keywords, operators, and punctuation
             if (/\d/.test(currentChar)) {
                 return this.readNumber();
             }
-
             if (currentChar === '"' || currentChar === "'") {
                 return this.readString(currentChar);
             }
-
             if (/[a-zA-Z_]/.test(currentChar)) {
                 return this.readKeywordOrIdentifier();
             }
 
+            // Handling operators and punctuation
             if (currentChar === '=') {
                 this.pos++;
                 return { value: '=', type: TokenType.Equals };
             }
-
             if (currentChar === '(') {
                 this.pos++;
                 return { value: '(', type: TokenType.OpenParen };
@@ -50,23 +60,35 @@ class Lexer {
                 this.pos++;
                 return { value: ')', type: TokenType.CloseParen };
             }
-
             if (currentChar === ';') {
                 this.pos++;
                 return { value: ';', type: TokenType.Semicolon };
             }
-
             if (currentChar === '{') {
                 this.pos++;
                 return { value: '{', type: TokenType.OpenBrace };
             }
-
             if (currentChar === '}') {
                 this.pos++;
                 return { value: '}', type: TokenType.CloseBrace };
             }
 
-            if (['+', '-', '*', '/', '>', '<', '==='].includes(currentChar)) {
+            // Handle array syntax
+            if (currentChar === '[') {
+                this.pos++;
+                return { value: '[', type: TokenType.OpenBracket };
+            }
+            if (currentChar === ']') {
+                this.pos++;
+                return { value: ']', type: TokenType.CloseBracket };
+            }
+            if (currentChar === ',') {
+                this.pos++;
+                return { value: ',', type: TokenType.Comma };
+            }            
+
+            // Handling binary operators
+            if (['+', '-', '*', '/', '>', '<'].includes(currentChar)) {
                 return this.readBinaryOperator(currentChar);
             }
 
@@ -83,6 +105,10 @@ class Lexer {
         }
     
         switch (idStr) {
+            case 'func':
+                return { value: idStr, type: TokenType.Func };
+            case 'return':
+                return { value: idStr, type: TokenType.Return };
             case 'if':
                 return { value: idStr, type: TokenType.If };
             case 'else':

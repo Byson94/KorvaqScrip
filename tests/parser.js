@@ -10,7 +10,9 @@ class Parser {
         const statements = [];
     
         while (this.currentToken) {
-            if (this.currentToken.type === TokenType.If) {
+            if (this.currentToken.type === TokenType.Func) {
+                statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.If) {
                 statements.push(this.parseIfStatement());
             } else if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
                 statements.push(this.parseVariableDeclaration());
@@ -27,6 +29,76 @@ class Parser {
     
         return statements;
     }
+
+    // New expect method for token verification
+    expect(tokenType) {
+        const token = this.currentToken;
+        if (token && token.type === tokenType) {
+            this.currentToken = this.lexer.nextToken(); // Move to the next token
+            return token;
+        }
+        throw new Error(`Expected token type ${tokenType}, but found ${token ? token.type : 'none'}`);
+    }
+
+    parseFunctionDeclaration() {
+        this.expect(TokenType.Func); // Ensure we see the 'func' token
+        const functionName = this.expect(TokenType.Identifier); // Expect an identifier for the function name
+        this.expect(TokenType.OpenParen); // Expect opening parenthesis
+        this.expect(TokenType.CloseParen); // Expect closing parenthesis (if no parameters)
+        this.expect(TokenType.OpenBrace); // Expect opening brace
+
+        // Parse the body of the function
+        const functionBody = this.parseBlock(); // Adjust to parse multiple statements
+
+        this.expect(TokenType.CloseBrace); // Expect closing brace
+    
+        return {
+            type: 'FunctionDeclaration',
+            name: functionName.value,
+            body: functionBody,
+        };
+    }
+
+    parseBlock() {
+        const statements = [];
+        while (this.currentToken && this.currentToken.type !== TokenType.CloseBrace) {
+            statements.push(this.parseStatement());
+        }
+        return statements;
+    }
+
+    parseStatement() {
+        if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
+            return this.parseVariableDeclaration();
+        } else if (this.currentToken.type === TokenType.Show) {
+            return this.parsePrintStatement();
+        } else if (this.currentToken.type === TokenType.If) {
+            return this.parseIfStatement();
+        } else if (this.currentToken.type === TokenType.Loop) {
+            return this.parseRepeatStatement();
+        } else if (this.currentToken.type === TokenType.Func) {
+            return this.parseFunctionDeclaration(); // Handle function declaration here
+        } else if (this.currentToken.type === TokenType.Identifier) {
+            return this.parseAssignmentOrExpression();
+        }
+        throw new Error(`Unexpected statement: ${this.currentToken.value}`);
+    }
+
+    parseVariableDeclaration() {
+        const isImmutable = this.currentToken.type === TokenType.Make;
+        this.expect(isImmutable ? TokenType.Make : TokenType.Let);
+        const name = this.expect(TokenType.Identifier);
+        this.expect(TokenType.Equals);
+        const value = this.parseExpression(); // Ensure this evaluates correctly
+    
+        // Check for the semicolon if present
+        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
+            this.expect(TokenType.Semicolon);
+        }
+    
+        return { type: 'VariableDeclaration', name: name.value, value, isImmutable };
+    }
+    
 
     parseIfStatement() {
         this.consume(TokenType.If);
@@ -49,79 +121,68 @@ class Parser {
         return { type: 'IfStatement', condition, thenBlock, elseBlock };
     }
 
-
-    parseBlock() {
-        const statements = [];
-        while (this.currentToken && this.currentToken.type !== TokenType.CloseBrace) {
-            statements.push(this.parseStatement());
-        }
-        return statements;
-    }
-
-    parseStatement() {
-        if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
-            return this.parseVariableDeclaration();
-        } else if (this.currentToken.type === TokenType.Show) {
-            return this.parsePrintStatement();
-        } else if (this.currentToken.type === TokenType.If) {
-            return this.parseIfStatement();
-        } else if (this.currentToken.type === TokenType.Loop) {
-            return this.parseRepeatStatement();
-        } else if (this.currentToken.type === TokenType.Identifier) {
-            return this.parseAssignmentOrExpression();
-        }
-        throw new Error(`Unexpected statement: ${this.currentToken.value}`);
-    }
-
-    parseVariableDeclaration() {
-        const type = this.currentToken.type;
-        this.consume(type); // consume let or make
-        const name = this.consume(TokenType.Identifier);
-        this.consume(TokenType.Equals);
-        const value = this.parseExpression();
-    
-        // OPTIONAL: Check if the next token is a semicolon and consume it if present
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.consume(TokenType.Semicolon);
-        }
-        
-        return { type: 'VariableDeclaration', name: name.value, value };
-    }
-    
     parseAssignmentOrExpression() {
-        const identifier = this.consume(TokenType.Identifier);
-        this.consume(TokenType.Equals); // Consume '=' for assignment
-        const value = this.parseExpression();
-    
-        // OPTIONAL: Check if the next token is a semicolon and consume it if present
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.consume(TokenType.Semicolon);
-        }
+        const identifier = this.expect(TokenType.Identifier); // Use `expect` instead of `consume`
         
-        return { type: 'Assignment', name: identifier.value, value };
-    }
+        // Check if it's a function call (next token is an open parenthesis)
+        if (this.currentToken.type === TokenType.OpenParen) {
+            // Consume the '('
+            this.expect(TokenType.OpenParen); // Use `expect`
     
-    parsePrintStatement() {
-        this.consume(TokenType.Show);
+            const args = [];
+            // Parse function arguments (if any)
+            if (this.currentToken.type !== TokenType.CloseParen) {
+                do {
+                    args.push(this.parseExpression());
+                } while (this.currentToken.type === TokenType.Comma && this.expect(TokenType.Comma)); // Use `expect`
+            }
+    
+            // Consume the ')'
+            this.expect(TokenType.CloseParen); // Use `expect`
+    
+            return { 
+                type: 'FunctionCall', 
+                name: identifier.value, 
+                args 
+            };
+        }
+    
+        // If not a function call, it's an assignment
+        this.expect(TokenType.Equals); // Use `expect` for assignment
         const value = this.parseExpression();
     
         // OPTIONAL: Check if the next token is a semicolon and consume it if present
         if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.consume(TokenType.Semicolon);
+            this.expect(TokenType.Semicolon); // Use `expect`
+        }
+    
+        return { 
+            type: 'Assignment', 
+            name: identifier.value, 
+            value 
+        };
+    }
+
+    parsePrintStatement() {
+        this.expect(TokenType.Show);
+        const value = this.parseExpression();
+    
+        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
+            this.expect(TokenType.Semicolon);
         }
         
         return { type: 'PrintStatement', value };
     }
 
     parseRepeatStatement() {
-        this.consume(TokenType.Loop);
-        this.consume(TokenType.OpenParen);
-        const identifier = this.consume(TokenType.Identifier);
-        this.consume(TokenType.Comma);
+        this.expect(TokenType.Loop);
+        this.expect(TokenType.OpenParen);
+        const identifier = this.expect(TokenType.Identifier);
+        this.expect(TokenType.Comma);
         const startValue = this.parseExpression();
-        this.consume(TokenType.Comma);
+        this.expect(TokenType.Comma);
         const endValue = this.parseExpression();
-        this.consume(TokenType.CloseParen);
+        this.expect(TokenType.CloseParen);
         const block = this.parseBlock();
         
         return { type: 'RepeatStatement', identifier, startValue, endValue, block };
@@ -136,7 +197,7 @@ class Parser {
 
         while (this.currentToken && this.currentToken.type === TokenType.BinaryOperator) {
             const operator = this.currentToken;
-            this.consume(TokenType.BinaryOperator);
+            this.expect(TokenType.BinaryOperator);
             const right = this.parsePrimary();
             left = { type: 'BinaryExpression', left, operator: operator.value, right };
         }
@@ -146,22 +207,46 @@ class Parser {
 
     parsePrimary() {
         if (this.currentToken.type === TokenType.Number) {
-            const number = this.consume(TokenType.Number);
+            const number = this.expect(TokenType.Number);
             return { type: 'NumberLiteral', value: parseFloat(number.value) };
         } else if (this.currentToken.type === TokenType.String) {
-            const str = this.consume(TokenType.String);
+            const str = this.expect(TokenType.String);
             return { type: 'StringLiteral', value: str.value };
+        } else if (this.currentToken.type === TokenType.Boolean) {
+            const bool = this.expect(TokenType.Boolean);
+            return { type: 'BooleanLiteral', value: bool.value };
         } else if (this.currentToken.type === TokenType.Identifier) {
-            const identifier = this.consume(TokenType.Identifier);
+            const identifier = this.expect(TokenType.Identifier);
             return { type: 'Identifier', name: identifier.value };
+        } else if (this.currentToken.type === TokenType.OpenBracket) { // Handle arrays
+            return this.parseArray();
         } else if (this.currentToken.type === TokenType.OpenParen) {
-            this.consume(TokenType.OpenParen);
+            this.expect(TokenType.OpenParen);
             const expr = this.parseExpression();
-            this.consume(TokenType.CloseParen);
+            this.expect(TokenType.CloseParen);
             return expr;
         }
-
         throw new Error(`Unexpected token: ${this.currentToken.value}`);
+    }
+
+    parseArray() {
+        this.expect(TokenType.OpenBracket);
+        const elements = [];
+        while (this.currentToken && this.currentToken.type !== TokenType.CloseBracket) {
+            elements.push(this.parseExpression());
+            if (this.currentToken.type === TokenType.Comma) {
+                this.expect(TokenType.Comma);
+            }
+        }
+        this.expect(TokenType.CloseBracket);
+        return { type: 'ArrayLiteral', elements };
+    }
+
+    parseReturnStatement() {
+        this.expect(TokenType.Return);
+        const value = this.parseExpression();
+        this.expect(TokenType.Semicolon);
+        return { type: 'ReturnStatement', value };
     }
 
     consume(tokenType) {

@@ -1,6 +1,31 @@
 class Interpreter {
     constructor() {
-        this.variables = {};
+        this.variables = {};  // Store values
+        this.immutables = new Set();  // Track immutable variables
+        this.functions = {};  // Store functions
+    }
+
+    handleFunctionDeclaration(statement) {
+        this.functions[statement.name] = statement;
+    }
+
+    executeFunctionCall(node) {
+        const func = this.functions[node.name];
+        if (!func) {
+            throw new Error(`Function "${node.name}" is not defined.`);
+        }
+        
+        const localScope = {}; // You can extend this to handle arguments in the future.
+        return this.executeFunctionBlock(func.body, localScope);
+    }
+    
+    executeFunctionBlock(statements, localScope) {
+        for (const statement of statements) {
+            if (statement.type === 'ReturnStatement') {
+                return this.evaluate(statement.value, localScope);
+            }
+            this.execute(statement, localScope);
+        }
     }
 
     visitIfStatement(node) {
@@ -41,6 +66,12 @@ class Interpreter {
             case 'IfStatement':
                 this.handleIfStatement(statement);
                 break;
+            case 'FunctionDeclaration':
+                this.handleFunctionDeclaration(statement);  // Handle function declaration
+                break;
+            case 'FunctionCall':
+                this.executeFunctionCall(statement);  // Handle function call
+                break;
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
@@ -56,19 +87,57 @@ class Interpreter {
     }
 
     handleVariableDeclaration(statement) {
+        // Ensure we're directly evaluating the value
         const value = this.evaluate(statement.value);
+        
+        // Check if the variable is already immutable
+        if (this.immutables.has(statement.name)) {
+            throw new Error(`Variable "${statement.name}" is immutable and cannot be redeclared.`);
+        }
+    
+        // If it's declared with "make", mark it as immutable
+        if (statement.isImmutable) {
+            if (this.variables.hasOwnProperty(statement.name)) {
+                throw new Error(`Variable "${statement.name}" already exists and cannot be redeclared.`);
+            }
+            this.immutables.add(statement.name);
+        }
+    
+        // Assign the evaluated value to the variable
         this.variables[statement.name] = value;
     }
-
+    
+    
+    // Add a new method to access elements in an array
+    getArrayElement(arrayName, index) {
+        const array = this.variables[arrayName];
+        if (!Array.isArray(array)) {
+            throw new Error(`Variable "${arrayName}" is not an array.`);
+        }
+        return array[index];
+    }    
+    
     handleAssignment(statement) {
+        // Check if the variable is immutable
+        if (this.immutables.has(statement.name)) {
+            throw new Error(`Variable "${statement.name}" is immutable and cannot be reassigned.`);
+        }
+        
+        // If mutable, assign the new value
         const value = this.evaluate(statement.value);
         this.variables[statement.name] = value;
     }
-
+    
     handlePrint(statement) {
         const value = this.evaluate(statement.value);
-        console.log(value);
-    }
+        if (Array.isArray(value)) {
+            console.log(`[${value.join(', ')}]`); // Correctly formats the array
+        } else if (typeof value === 'boolean') {
+            console.log(value); // Directly print the boolean
+        } else {
+            console.log(value); // Print the value directly for non-array and non-boolean types
+        }
+    }    
 
     handleRepeat(statement) {
         const start = this.evaluate(statement.startValue);
@@ -86,19 +155,29 @@ class Interpreter {
                 return expression.value;
             case 'StringLiteral':
                 return expression.value;
+            case 'BooleanLiteral':
+                return expression.value;  // Ensure it returns the boolean value
             case 'Identifier':
-                return this.variables[expression.name] || 0;
+                // Check if the variable exists
+                if (this.variables.hasOwnProperty(expression.name)) {
+                    return this.variables[expression.name]; // Return the exact value
+                }
+                throw new Error(`Variable "${expression.name}" is not defined.`);
             case 'BinaryExpression':
                 return this.evaluateBinaryExpression(expression);
+            case 'FunctionCall':
+                return this.executeFunctionCall(expression);
+            case 'ArrayLiteral':
+                return expression.elements.map(element => this.evaluate(element));
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }
-    }
-
+    }       
+    
     evaluateBinaryExpression(expression) {
         const left = this.evaluate(expression.left);
         const right = this.evaluate(expression.right);
-
+    
         switch (expression.operator) {
             case '>':
                 return left > right;
@@ -106,6 +185,10 @@ class Interpreter {
                 return left < right;
             case '===':
                 return left === right;
+            case '&&': // New case for logical AND
+                return left && right;
+            case '||': // New case for logical OR
+                return left || right;
             case '+':
                 return left + right;
             case '-':
@@ -117,7 +200,7 @@ class Interpreter {
             default:
                 throw new Error(`Unknown operator: ${expression.operator}`);
         }
-    }
+    }    
 }
 
 export default Interpreter;
