@@ -9,12 +9,12 @@ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 of the Software, and to permit persons to whom the Software
 is furnished to do so, subject to the following conditions:
 
-1. If you use the source code of the language's interpreter in your project,
-you must include the copyright notice and permission notice in all copies and credit
-the Korvaq language at least once in any of your documentation.
+1. If you use the source code of this software in your project,
+you must include the copyright notice and permission notice in all copies
+and credit the original project at least once in any of your documentation.
 
 2. This language is free to use and distribute files made using it. However,
-you cannot take the entire Korvaq project and sell or distribute it as your own
+you cannot take the entire project source code and sell or distribute it as your own
 without making modifications. If you do make modifications to the source code,
 you may then distribute the modified version BUT YOU MUST INCLUDE THIS LICENSE
 IN THE MODIFIED VERSION RATHER THEN YOUR OWN LICENSE WHILE DISTRIBUTING ANY MODIFIED SOURCE CODE.
