@@ -131,6 +131,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.Run };
             case 'then':
                 return { value: idStr, type: TokenType.Then };
+            case 'connect':
+                return { value: idStr, type: TokenType.Connect };
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

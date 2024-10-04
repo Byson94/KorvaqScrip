@@ -124,7 +124,7 @@
                         originalConsoleLog.apply(console, args);
                     };
 
-                    const interpreter = new Interpreter(); // Create an instance of Interpreter
+                    const interpreter = new Interpreter();
                     interpreter.interpret(statements);
                     console.log = originalConsoleLog;
 
@@ -161,7 +161,7 @@
                 editorContainer.innerHTML = '<div id="editor"></div>';
                 createMonacoEditor();
             } else {
-                editorContainer.innerHTML = '<textarea id="defaultEditor">show("Hello, World!");</textarea>';
+                editorContainer.innerHTML = '<textarea id="defaultEditor">show("Hello, World!");\nconnect("./main.kq");</textarea>';
             }
         }
 
@@ -176,8 +176,8 @@
             monaco.languages.setMonarchTokensProvider('korvaqscrip', {
                 tokenizer: {
                     root: [
-                        // keywords for KorvaqScrip (you can add more)
-                        [/let|make|func|if|else|loop|return|show/, 'keyword'],
+                        // keywords for KorvaqScrip (including connect)
+                        [/let|make|func|if|else|loop|return|show|connect/, 'keyword'],
 
                         // operators
                         [/[=><!~?:&|+\-*\/%]+/, 'operator'],

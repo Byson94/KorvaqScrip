@@ -5,6 +5,11 @@ class Interpreter {
         this.functions = {};  // Store functions
     }
 
+    isNode() {
+        return (typeof process !== 'undefined' && process.versions != null && process.versions.node != null);
+    }
+    
+
     handleFunctionDeclaration(statement) {
         this.functions[statement.name] = statement;
     }
@@ -67,18 +72,22 @@ class Interpreter {
                 this.handleIfStatement(statement);
                 break;
             case 'FunctionDeclaration':
-                this.handleFunctionDeclaration(statement);  // Handle function declaration
+                this.handleFunctionDeclaration(statement);
                 break;
             case 'FunctionCall':
-                this.executeFunctionCall(statement);  // Handle function call
+                this.executeFunctionCall(statement);
                 break;
-            case 'DeleteVariable': // Handle the delete variable statement
+            case 'DeleteVariable':
                 this.handleDeleteVariable(statement);
+                break;
+            case 'ConnectStatement':  // Add this case to handle "connect" statement
+                this.handleConnect(statement);
                 break;
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
     }
+    
 
     handleIfStatement(statement) {
         const condition = this.evaluate(statement.condition);
@@ -147,6 +156,59 @@ class Interpreter {
         const value = this.evaluate(statement.value);
         this.variables[statement.name] = value;
     }
+
+    async handleConnect(statement) {
+        const filePath = statement.filePath;
+    
+        // Ensure it's a .kq file
+        if (!filePath.endsWith('.kq')) {
+            throw new Error(`Only .kq files can be connected. Provided: ${filePath}`);
+        }
+    
+        if (this.isNode()) {
+            // Node.js environment
+            const { promises: fs } = await import('fs');
+            const path = (await import('path')).default;
+    
+            // Dynamically import Lexer and Parser
+            const { default: Lexer } = await import('./lexer.js');
+            const { default: Parser } = await import('./parser.js');
+    
+            const absolutePath = path.resolve(filePath);
+    
+            // Read the file contents in Node.js
+            try {
+                const fileContents = await fs.readFile(absolutePath, 'utf-8');
+                const lexer = new Lexer(fileContents);
+                const parser = new Parser(lexer);
+                const statements = parser.parse();
+    
+                this.interpret(statements);
+            } catch (error) {
+                throw new Error(`Failed to load and execute file: ${error.message}`);
+            }
+    
+        } else {
+            // Browser environment
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`Failed to load file: ${filePath}`);
+                }
+                const fileContents = await response.text();
+                const { default: Lexer } = await import('./lexer.js');
+                const { default: Parser } = await import('./parser.js');
+    
+                const lexer = new Lexer(fileContents);
+                const parser = new Parser(lexer);
+                const statements = parser.parse();
+    
+                this.interpret(statements);
+            } catch (error) {
+                throw new Error(`Failed to load and execute file: ${error.message}`);
+            }
+        }
+    }
     
     handlePrint(statement) {
         const value = this.evaluate(statement.value);
@@ -166,6 +228,19 @@ class Interpreter {
         for (let i = start; i <= end; i++) {
             this.variables[statement.identifier.value] = i;
             this.interpret(statement.block);
+        }
+    }
+
+    handleReturn(statement) {
+        return this.evaluate(statement.value);
+    }
+    
+    executeFunctionBlock(statements, localScope) {
+        for (const statement of statements) {
+            if (statement.type === 'ReturnStatement') {
+                return this.handleReturn(statement);
+            }
+            this.execute(statement, localScope);
         }
     }
 
@@ -205,22 +280,23 @@ class Interpreter {
                 return left < right;
             case '===':
                 return left === right;
-            case '&&': // New case for logical AND
+            case '!=':
+                return left !== right;
+            case '&&':
                 return left && right;
-            case '||': // New case for logical OR
+            case '||':
                 return left || right;
-            case '+':
-                return left + right;
-            case '-':
-                return left - right;
-            case '*':
-                return left * right;
-            case '/':
-                return left / right;
+            case '!':
+                return !left;
+            case '%':
+                return left % right;
+            case '**':
+                return left ** right;
+            // Add more operators here as needed
             default:
                 throw new Error(`Unknown operator: ${expression.operator}`);
         }
-    }    
+    }       
 }
 
 export default Interpreter;

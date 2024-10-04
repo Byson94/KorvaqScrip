@@ -22,6 +22,7 @@ const TokenType = {
     Comma: 'Comma',
     Boolean: 'Boolean',
     DeleteVar: 'DeleteVar',
+    Connect: 'Connect',
 };
 
 export default TokenType;

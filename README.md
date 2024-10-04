@@ -4,7 +4,7 @@ A programming language that is simple to learn and easy to use due to its simple
 # KorvaqScrip Documentation
 
 ## Introduction
-**KorvaqScrip** is a programming language designed to be simple to learn and easy to use due to its straightforward syntax. It allows users to write clear and concise code while supporting essential programming constructs and data types.
+**KorvaqScrip** is a programming language designed to be simple to learn and easy to use due to its straightforward syntax. It allows users to write clear and concise code while supporting essential programming constructs and data types. "KorvaqScrip" uses the ".kq" file extension.
 
 **NOTE:** In this documentation we have also added features that are under testing and development so some of the codes in this documentation wouldnt work!
 
@@ -29,7 +29,8 @@ A programming language that is simple to learn and easy to use due to its simple
    - [Function Calls](#function-calls)
 8. [Arrays](#arrays)
 9. [Comments](#comments)
-10. [Examples](#examples)
+10. [Linking Files](#linking-files)
+11. [Examples](#examples)
 
 ## Basic Syntax
 KorvaqScrip uses a clear and readable syntax to facilitate learning. Each statement is generally terminated with a semicolon (`;`), and code blocks are enclosed in braces (`{}`).
@@ -179,6 +180,22 @@ Comments can be added using `//` for single-line comments.
 ```korvaq
 // This is a comment
 let z = 5; // This assigns 5 to z
+```
+
+## Linking Files
+We can link 2 different .kq files together by using `connect` keyword.
+
+
+**Example**
+
+*main.kq:*
+```
+show "hi"
+```
+
+*example.kq:*
+```korvaq
+connect "./main.kq" // this will output "hi"
 ```
 
 ## Examples
