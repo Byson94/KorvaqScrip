@@ -260,17 +260,19 @@ Use the let keyword for variable declarations. This will allow you to create var
 
 ``` korvaq
 let myVariable = 10;
-``
+```
 
-Using delvar and delvar all
+***Using delvar and delvar all***
+
 Utilize the delvar command to delete specific variables once they are no longer needed. This helps in managing memory effectively.
 
 ```korvaq
 delvar myVariable; // Removes myVariable from memory
 ```
 
-Use delvar all; at the end of a script to clear all declared variables. This is particularly useful for preventing memory leaks in longer scripts.
+It is recommended to use `delvar all;` at the end of a script to clear all declared variables. This is particularly useful for preventing memory leaks in longer scripts. But `delvar all` may not be suited for all projects , especially those that require persistent data between multiple files.
+
 
 ```korvaq
-delvar all; // Cleans up all declared variables at the end of the script
+delvar all; // Cleans up all declared variables
 ```
