@@ -10,6 +10,7 @@ class Lexer {
         while (this.pos < this.input.length) {
             const currentChar = this.input[this.pos];
 
+            // Skip whitespace
             if (/\s/.test(currentChar)) {
                 this.pos++;
                 continue;
@@ -26,7 +27,7 @@ class Lexer {
                 }
             }
 
-            // Check for boolean literals first
+            // Check for boolean literals
             if (this.input.startsWith('true', this.pos)) {
                 this.pos += 4; // Move position past "true"
                 return { value: true, type: TokenType.Boolean };
@@ -47,10 +48,14 @@ class Lexer {
                 return this.readKeywordOrIdentifier();
             }
 
-            // Handling operators and punctuation
+            // Handle operators and punctuation
             if (currentChar === '=') {
                 this.pos++;
-                return { value: '=', type: TokenType.Equals };
+                if (this.input[this.pos] === '=') {
+                    this.pos++;
+                    return { value: '==', type: TokenType.Equals }; // Handle equality
+                }
+                return { value: '=', type: TokenType.Equals }; // Assignment
             }
             if (currentChar === '(') {
                 this.pos++;
@@ -85,11 +90,35 @@ class Lexer {
             if (currentChar === ',') {
                 this.pos++;
                 return { value: ',', type: TokenType.Comma };
-            }            
+            }
 
-            // Handling binary operators
-            if (['+', '-', '*', '/', '>', '<'].includes(currentChar)) {
+            // Handle binary operators
+            if (['+', '-', '*', '/'].includes(currentChar)) {
                 return this.readBinaryOperator(currentChar);
+            }
+
+            // Handle comparison operators
+            if (currentChar === '>') {
+                return this.readComparisonOperator('>');
+            }
+            if (currentChar === '<') {
+                return this.readComparisonOperator('<');
+            }
+
+            // Handle logical operators
+            if (currentChar === '&' && this.input[this.pos + 1] === '&') {
+                this.pos += 2; // Move past '&&'
+                return { value: '&&', type: TokenType.LogicalAnd };
+            }
+            if (currentChar === '|' && this.input[this.pos + 1] === '|') {
+                this.pos += 2; // Move past '||'
+                return { value: '||', type: TokenType.LogicalOr };
+            }
+
+            // Handle not equal operator
+            if (currentChar === '!' && this.input[this.pos + 1] === '=') {
+                this.pos += 2; // Move past '!='
+                return { value: '!=', type: TokenType.NotEquals };
             }
 
             throw new Error(`Unexpected character: ${currentChar}`);
@@ -103,7 +132,7 @@ class Lexer {
         while (this.pos < this.input.length && /[a-zA-Z_]/.test(this.input[this.pos])) {
             idStr += this.input[this.pos++];
         }
-    
+
         switch (idStr) {
             case 'delvar': 
                 return { value: idStr, type: TokenType.DeleteVar };
@@ -163,13 +192,17 @@ class Lexer {
     readBinaryOperator(currentChar) {
         let operator = currentChar;
         this.pos++;
+        return { value: operator, type: TokenType.BinaryOperator };
+    }
 
-        if (currentChar === '>' || currentChar === '<') {
-            // Look for additional characters for multi-character operators (e.g., '===')
-            if (this.pos < this.input.length && this.input[this.pos] === '=') {
-                operator += '=';
-                this.pos++;
-            }
+    readComparisonOperator(currentChar) {
+        let operator = currentChar;
+        this.pos++;
+
+        // Check for multi-character operators (e.g., '>=', '<=', '==', '!=')
+        if (this.pos < this.input.length && this.input[this.pos] === '=') {
+            operator += '=';
+            this.pos++;
         }
 
         return { value: operator, type: TokenType.BinaryOperator };

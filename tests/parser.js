@@ -208,14 +208,28 @@ class Parser {
 
     parseBinaryExpression() {
         let left = this.parsePrimary();
-
-        while (this.currentToken && this.currentToken.type === TokenType.BinaryOperator) {
+        
+        while (this.currentToken && (
+            // Include all binary operators
+            this.currentToken.type === TokenType.BinaryOperator ||
+            this.currentToken.type === TokenType.Equals || 
+            this.currentToken.type === TokenType.NotEquals || 
+            this.currentToken.type === TokenType.EqualsEqual || 
+            this.currentToken.type === TokenType.StrictEquals || 
+            this.currentToken.type === TokenType.StrictNotEquals || 
+            this.currentToken.type === TokenType.GreaterThan ||
+            this.currentToken.type === TokenType.GreaterThanOrEqual ||
+            this.currentToken.type === TokenType.LessThan ||
+            this.currentToken.type === TokenType.LessThanOrEqual ||
+            this.currentToken.type === TokenType.LogicalAnd ||
+            this.currentToken.type === TokenType.LogicalOr
+        )) {
             const operator = this.currentToken;
-            this.expect(TokenType.BinaryOperator);
+            this.expect(operator.type); // Consume the operator
             const right = this.parsePrimary();
             left = { type: 'BinaryExpression', left, operator: operator.value, right };
         }
-
+    
         return left;
     }
 

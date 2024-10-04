@@ -155,6 +155,8 @@ KorvaqScrip supports binary expressions for arithmetic and logical operations.
 ```korvaq
 let total = a + b; // total is 30
 let isEqual = (a == b); // isEqual is false
+let isTrue = (x > y && y < z); // isTrue evaluates to true if both conditions are met
+let isOther = (x > y || y < z); // isOther evaluates to true if at least one condition is met
 ```
 
 ### Function Calls

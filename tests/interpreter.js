@@ -20,9 +20,16 @@ class Interpreter {
             throw new Error(`Function "${node.name}" is not defined.`);
         }
         
-        const localScope = {}; // You can extend this to handle arguments in the future.
+        const localScope = {};
+        if (func.params) {
+            for (let i = 0; i < func.params.length; i++) {
+                localScope[func.params[i].name] = this.evaluate(node.arguments[i]);
+            }
+        }
+        
         return this.executeFunctionBlock(func.body, localScope);
     }
+    
     
     executeFunctionBlock(statements, localScope) {
         for (const statement of statements) {
@@ -34,13 +41,15 @@ class Interpreter {
     }
 
     visitIfStatement(node) {
-        const conditionResult = this.visit(node.condition);
+        // Evaluate the condition using the newly added comparisons
+        const conditionResult = this.evaluate(node.condition);
         if (conditionResult) {
             this.executeBlock(node.thenBlock);
         } else if (node.elseBlock) {
             this.executeBlock(node.elseBlock);
         }
     }
+    
 
     executeBlock(statements) {
         for (const statement of statements) {
@@ -280,8 +289,18 @@ class Interpreter {
                 return left < right;
             case '===':
                 return left === right;
+            case '==':  // Add this case for equality comparison
+                return left == right;  // Note that this uses coercion
             case '!=':
                 return left !== right;
+            case '!==':  // Optionally add strict inequality
+                return left !== right;
+            case '>=':
+                return left >= right;
+            case '<=':
+                return left <= right;
+            case '=>':
+                return left >= right;
             case '&&':
                 return left && right;
             case '||':
@@ -292,11 +311,10 @@ class Interpreter {
                 return left % right;
             case '**':
                 return left ** right;
-            // Add more operators here as needed
             default:
                 throw new Error(`Unknown operator: ${expression.operator}`);
         }
-    }       
+    }    
 }
 
 export default Interpreter;
