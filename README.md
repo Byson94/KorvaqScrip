@@ -30,7 +30,8 @@ A programming language that is simple to learn and easy to use due to its simple
 8. [Arrays](#arrays)
 9. [Comments](#comments)
 10. [Linking Files](#linking-files)
-11. [Examples](#examples)
+11. [Running Asynchronous](#running-asynchronous)
+12. [Examples](#examples)
 
 ## Basic Syntax
 KorvaqScrip uses a clear and readable syntax to facilitate learning. Each statement is generally terminated with a semicolon (`;`), and code blocks are enclosed in braces (`{}`).
@@ -188,7 +189,7 @@ let z = 5; // This assigns 5 to z
 We can link 2 different .kq files together by using `connect` keyword.
 
 
-**Example**
+**Example**:
 
 *main.kq:*
 ```
@@ -198,6 +199,16 @@ show "hi"
 *example.kq:*
 ```korvaq
 connect "./main.kq" // this will output "hi"
+```
+
+## Running Asynchronous
+Code's can be ran asynchorous by using the `async {}`  keyword.
+
+**Example**:
+```
+async {
+    show "hi" // hi is shown asynchoronous
+}
 ```
 
 ## Examples

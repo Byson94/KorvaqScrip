@@ -63,6 +63,13 @@ class Interpreter {
         });
     }
 
+    async executeAsyncBlock(asyncBlock) {
+        // Execute each statement in the async block
+        for (const statement of asyncBlock.statements) {
+            await this.execute(statement); // Ensure each statement is awaited
+        }
+    }
+
     execute(statement) {
         switch (statement.type) {
             case 'VariableDeclaration':
@@ -92,11 +99,12 @@ class Interpreter {
             case 'ConnectStatement':  // Add this case to handle "connect" statement
                 this.handleConnect(statement);
                 break;
+            case 'AsyncBlock':
+                return this.executeAsyncBlock(statement);
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
     }
-    
 
     handleIfStatement(statement) {
         const condition = this.evaluate(statement.condition);

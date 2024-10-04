@@ -14,6 +14,10 @@ class Parser {
                 statements.push(this.parseFunctionDeclaration());
             } else if (this.currentToken.type === TokenType.If) {
                 statements.push(this.parseIfStatement());
+            } else if (this.currentToken.type === TokenType.Connect) { // Add this line
+                statements.push(this.parseConnectStatement()); // Add this line
+            } else if (this.currentToken.type === TokenType.Async) {
+                statements.push(this.parseAsyncStatement());
             } else if (this.currentToken.type === TokenType.DeleteVar) {
                 statements.push(this.deleteVarStatement());
             } else if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
@@ -32,6 +36,18 @@ class Parser {
         return statements;
     }
 
+    parseConnectStatement() {
+        this.expect(TokenType.Connect); // Expect the connect token
+        const filePath = this.expect(TokenType.String); // Expect a string token for the file path
+    
+        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
+            this.expect(TokenType.Semicolon); // Consume the semicolon if present
+        }
+    
+        return { type: 'ConnectStatement', filePath: filePath.value }; // Return a ConnectStatement node
+    }
+    
+
     // New expect method for token verification
     expect(tokenType) {
         const token = this.currentToken;
@@ -42,8 +58,23 @@ class Parser {
         throw new Error(`Expected token type ${tokenType}, but found ${token ? token.type : 'none'}`);
     }
 
+    parseAsyncStatement() {
+        this.expect(TokenType.Async); // Expect the async token
+        this.expect(TokenType.OpenBrace); // Expect the opening brace
+    
+        // Parse the block of statements within the async block
+        const statements = this.parseBlock(); // Parse the block of statements
+    
+        this.expect(TokenType.CloseBrace); // Expect the closing brace
+    
+        return {
+            type: 'AsyncBlock',
+            statements,
+        };
+    }
+    
+
     deleteVarStatement() {
-        console.log('will this work!?')
         this.expect(TokenType.DeleteVar); // Expect the delete token
         const identifier = this.expect(TokenType.Identifier); // Expect the variable name to delete
         if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {

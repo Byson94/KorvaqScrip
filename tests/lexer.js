@@ -162,6 +162,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.Then };
             case 'connect':
                 return { value: idStr, type: TokenType.Connect };
+            case 'async':
+                return { value: idStr, type: TokenType.Async };
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }
