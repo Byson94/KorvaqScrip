@@ -32,6 +32,7 @@ A programming language that is simple to learn and easy to use due to its simple
 10. [Linking Files](#linking-files)
 11. [Running Asynchronous](#running-asynchronous)
 12. [Examples](#examples)
+13. [Recommended Approaches](#recommended-approaches)
 
 ## Basic Syntax
 KorvaqScrip uses a clear and readable syntax to facilitate learning. Each statement is generally terminated with a semicolon (`;`), and code blocks are enclosed in braces (`{}`).
@@ -247,4 +248,29 @@ let fruits = ["Apple", "Banana", "Cherry"];
 loop i, 0, 2 {
     show fruits[i]; // Displays each fruit
 }
+```
+
+## Recommended Approaches
+
+### Variable Management
+------------------
+**Declaring Variables**
+
+Use the let keyword for variable declarations. This will allow you to create variables that are limited to the scope they are declared in.
+
+``` korvaq
+let myVariable = 10;
+``
+
+Using delvar and delvar all
+Utilize the delvar command to delete specific variables once they are no longer needed. This helps in managing memory effectively.
+
+```korvaq
+delvar myVariable; // Removes myVariable from memory
+```
+
+Use delvar all; at the end of a script to clear all declared variables. This is particularly useful for preventing memory leaks in longer scripts.
+
+```korvaq
+delvar all; // Cleans up all declared variables at the end of the script
 ```
