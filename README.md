@@ -13,7 +13,7 @@ A programming language that is simple to learn and easy to use due to its simple
 2. [Variable Declarations](#variable-declarations)
    - [Mutable Variables](#mutable-variables)
    - [Immutable Variables](#immutable-variables)
-   - [Delete Variables](#delete-variables)
+   - [Deleting Variables](#deleting-variables)
 3. [Data Types](#data-types)
    - [Numbers](#numbers)
    - [Strings](#strings)
@@ -66,6 +66,11 @@ let x = 21;
 delvar x; // Deletes the variable
 
 show x; // This will result in an error
+
+// If you have made a huge project, then if you didnt delete variables it may lead to memory leaks. If you have many variables, you can just use `delvar all` to delete all variables.
+
+// Example:
+delvar all; // delete's all variables created.
 ```
 
 ## Data Types

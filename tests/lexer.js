@@ -4,6 +4,12 @@ class Lexer {
     constructor(input) {
         this.pos = 0;
         this.input = input;
+        this.restrictedKeywords = new Set([
+            'var', 'const', 'while', 'for', 'switch', 'case', 'break', 
+            'continue', 'default', 'class', 'extends', 'super', 'this', 
+            'typeof', 'instanceof', 'void', 'delete', 'new', 'in', 
+            'try', 'catch', 'finally', 'throw', 'debugger'
+        ]);
     }
 
     nextToken() {
@@ -132,6 +138,12 @@ class Lexer {
         while (this.pos < this.input.length && /[a-zA-Z_]/.test(this.input[this.pos])) {
             idStr += this.input[this.pos++];
         }
+
+        // Check for restricted keywords
+        if (this.restrictedKeywords.has(idStr) && idStr !== 'delvar all') {
+            throw new Error(`Restricted keyword used: ${idStr}`);
+        }
+        
 
         switch (idStr) {
             case 'delvar': 

@@ -116,6 +116,11 @@ class Interpreter {
     }
 
     handleVariableDeclaration(statement) {
+        // Check if the variable name is "all"
+        if (statement.name === 'all') {
+            throw new Error(`Variable name "all" is not allowed.`);
+        }
+    
         // Ensure we're directly evaluating the value
         const value = this.evaluate(statement.value);
         
@@ -138,20 +143,36 @@ class Interpreter {
     
     handleDeleteVariable(statement) {
         const varName = statement.name;
-        
+    
+        // Check if the command is to delete all variables
+        if (varName === 'all') {
+            // Iterate through the variables and delete them
+            for (const key in this.variables) {
+                if (this.variables.hasOwnProperty(key)) {
+                    // Check if the variable is immutable
+                    if (this.immutables.has(key)) {
+                        throw new Error(`Variable "${key}" is immutable and cannot be deleted.`);
+                    }
+                    // Delete the variable
+                    delete this.variables[key];
+                }
+            }
+            return; // Exit the function after deleting all
+        }
+    
         // Check if the variable exists
         if (!this.variables.hasOwnProperty(varName)) {
             throw new Error(`Variable "${varName}" is not defined.`);
         }
-        
+    
         // Check if the variable is immutable
         if (this.immutables.has(varName)) {
             throw new Error(`Variable "${varName}" is immutable and cannot be deleted.`);
         }
-        
+    
         // Delete the variable from the variables object
         delete this.variables[varName];
-        console.log(this.variables[varName])
+        console.log(`Variable "${varName}" has been deleted.`);
     }
     
     // Add a new method to access elements in an array
@@ -164,6 +185,11 @@ class Interpreter {
     }    
     
     handleAssignment(statement) {
+        // Check if the variable name is "all"
+        if (statement.name === 'all') {
+            throw new Error(`Variable name "all" is not allowed.`);
+        }
+    
         // Check if the variable is immutable
         if (this.immutables.has(statement.name)) {
             throw new Error(`Variable "${statement.name}" is immutable and cannot be reassigned.`);
@@ -173,6 +199,7 @@ class Interpreter {
         const value = this.evaluate(statement.value);
         this.variables[statement.name] = value;
     }
+    
 
     async handleConnect(statement) {
         const filePath = statement.filePath;
@@ -297,18 +324,16 @@ class Interpreter {
                 return left < right;
             case '===':
                 return left === right;
-            case '==':  // Add this case for equality comparison
-                return left == right;  // Note that this uses coercion
+            case '==':
+                return left == right; // Note that this uses coercion
             case '!=':
                 return left !== right;
-            case '!==':  // Optionally add strict inequality
+            case '!==':
                 return left !== right;
             case '>=':
                 return left >= right;
             case '<=':
                 return left <= right;
-            case '=>':
-                return left >= right;
             case '&&':
                 return left && right;
             case '||':
@@ -319,10 +344,16 @@ class Interpreter {
                 return left % right;
             case '**':
                 return left ** right;
+            case '+': 
+                return String(left) + String(right);
+            case '-': 
+                return left - right;
+            case '*': 
+                return left * right;
             default:
                 throw new Error(`Unknown operator: ${expression.operator}`);
         }
-    }    
+    } 
 }
 
 export default Interpreter;
