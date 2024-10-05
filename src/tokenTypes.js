@@ -40,7 +40,7 @@ const TokenType = {
     Connect: 'Connect',
     And: 'And', // For &&
     Or: 'Or', // For ||
-    Async: 'Async',
+    Async: 'Async'
 };
 
 export default TokenType;

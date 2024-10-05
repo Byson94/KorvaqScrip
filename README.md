@@ -119,10 +119,24 @@ The `loop` statement is used for iteration. It requires an identifier, a start v
 
 **Example**:
 ```korvaq
-loop i, 0, 5 {
+loop (i, 0, 5) {
     show i; // Displays numbers from 0 to 5
 }
 ```
+
+The `While` statement also does  iteration, but it requires a condition to be met before it stops.
+
+**Example**:
+```korvaq
+example = false
+while (example == false) {
+    show "Example is false!"
+    example = true;
+}
+```
+
+NOTE: THE LOOPS CAN ALSO CAUSE TROUBLE  IF NOT USED PROPERLY, SO USE THEM WITH CAUTION. BE CAUTIOUS OF INFINITE LOOPS THEY CAN CRASH THE PROGRAM.
+
 
 ## Functions
 Functions are declared using the `func` keyword. They can accept parameters and return values.

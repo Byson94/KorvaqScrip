@@ -5,6 +5,7 @@ const TokenType = {
     Make: 'Make',
     Show: 'Show',
     Loop: 'Loop',
+    While: 'While',
     OpenParen: 'OpenParen',
     CloseParen: 'CloseParen',
     OpenBrace: 'OpenBrace',
@@ -40,7 +41,7 @@ const TokenType = {
     Connect: 'Connect',
     And: 'And', // For &&
     Or: 'Or', // For ||
-    Async: 'Async',
+    Async: 'Async'
 };
 
 export default TokenType;

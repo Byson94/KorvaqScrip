@@ -75,7 +75,6 @@ class Interpreter {
         // Add evaluation logic for other types if needed...
     }
     
-    
     visitIfStatement(node) {
         // Evaluate the condition using the newly added comparisons
         const conditionResult = this.evaluate(node.condition);
@@ -132,7 +131,7 @@ class Interpreter {
             case 'DeleteVariable':
                 this.handleDeleteVariable(statement);
                 break;
-            case 'ConnectStatement':  // Add this case to handle "connect" statement
+            case 'ConnectStatement':
                 this.handleConnect(statement);
                 break;
             case 'AsyncBlock':
@@ -302,14 +301,23 @@ class Interpreter {
     }    
 
     handleRepeat(statement) {
+        // Evaluate the start and end values of the loop
         const start = this.evaluate(statement.startValue);
         const end = this.evaluate(statement.endValue);
-
+    
+        // Loop through the range from start to end (inclusive)
         for (let i = start; i <= end; i++) {
+            // Set the loop variable in the variables context
             this.variables[statement.identifier.value] = i;
+    
+            // Execute the block of code inside the loop
             this.interpret(statement.block);
         }
+    
+        // Optionally, delete the loop variable after the loop is done
+        delete this.variables[statement.identifier.value];
     }
+    
 
     handleReturn(statement) {
         return this.evaluate(statement.value);

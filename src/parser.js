@@ -251,18 +251,36 @@ class Parser {
     }
 
     parseRepeatStatement() {
-        this.expect(TokenType.Loop);
-        this.expect(TokenType.OpenParen);
-        const identifier = this.expect(TokenType.Identifier);
-        this.expect(TokenType.Comma);
-        const startValue = this.parseExpression();
-        this.expect(TokenType.Comma);
-        const endValue = this.parseExpression();
-        this.expect(TokenType.CloseParen);
-        const block = this.parseBlock();
+        this.expect(TokenType.Loop);        // 'loop' keyword
+        this.expect(TokenType.OpenParen);   // Opening '('
         
-        return { type: 'RepeatStatement', identifier, startValue, endValue, block };
+        const identifier = this.expect(TokenType.Identifier); // Loop counter variable
+        this.expect(TokenType.Comma);
+        
+        const startValue = this.parseExpression(); // Starting value of loop counter
+        this.expect(TokenType.Comma);
+        
+        const endValue = this.parseExpression();   // Ending value of loop counter
+        this.expect(TokenType.CloseParen);         // Closing ')'
+        
+        // Expect '{' to begin the loop block
+        this.expect(TokenType.OpenBrace);          
+        
+        // Parse the block within the '{ }'
+        const block = this.parseBlock();           // Block of code to execute repeatedly
+        
+        // Expect '}' to close the block
+        this.expect(TokenType.CloseBrace);
+        
+        return { 
+            type: 'RepeatStatement', 
+            identifier: identifier.value, 
+            startValue, 
+            endValue, 
+            block 
+        };
     }
+    
 
     parseExpression() {
         return this.parseBinaryExpression();

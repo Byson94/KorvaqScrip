@@ -75,7 +75,6 @@ class Interpreter {
         // Add evaluation logic for other types if needed...
     }
     
-    
     visitIfStatement(node) {
         // Evaluate the condition using the newly added comparisons
         const conditionResult = this.evaluate(node.condition);
@@ -89,7 +88,7 @@ class Interpreter {
 
     executeBlock(statements) {
         for (const statement of statements) {
-            this.visit(statement);
+            this.execute(statement);
         }
     }
 
@@ -120,6 +119,8 @@ class Interpreter {
             case 'RepeatStatement':
                 this.handleRepeat(statement);
                 break;
+            case 'WhileStatement':
+                this.handleWhile(statement);
             case 'IfStatement':
                 this.handleIfStatement(statement);
                 break;
@@ -132,7 +133,7 @@ class Interpreter {
             case 'DeleteVariable':
                 this.handleDeleteVariable(statement);
                 break;
-            case 'ConnectStatement':  // Add this case to handle "connect" statement
+            case 'ConnectStatement':
                 this.handleConnect(statement);
                 break;
             case 'AsyncBlock':
@@ -302,12 +303,30 @@ class Interpreter {
     }    
 
     handleRepeat(statement) {
+        // Evaluate the start and end values of the loop
         const start = this.evaluate(statement.startValue);
         const end = this.evaluate(statement.endValue);
-
+    
+        // Loop through the range from start to end (inclusive)
         for (let i = start; i <= end; i++) {
+            // Set the loop variable in the variables context
             this.variables[statement.identifier.value] = i;
+    
+            // Execute the block of code inside the loop
             this.interpret(statement.block);
+        }
+    
+        // Optionally, delete the loop variable after the loop is done
+        delete this.variables[statement.identifier.value];
+    }
+    
+    handleWhile(statement) {
+        // Extract the condition and the block from the statement
+        const { condition, block } = statement;
+    
+        // Execute the loop while the condition is true
+        while (this.evaluate(condition)) {
+            this.executeBlock(block);
         }
     }
 
@@ -324,8 +343,8 @@ class Interpreter {
         }
     }
 
-    // NOTE: THIS IS THE IMPOSTER WHO MANAGES THE VARIABLES BEHIND THE SCENESE!! DONT BELIEVE THIS CODE IT TRAPPED ME FOR
-    // 8 HRS TRYING TO FIND OUT WHY THE CODE IS LOOKING FOR THIS.VARIABLES FIRST. BEWARE YOU NAVIGATOR THE BELOW ONE IS SUS.
+    // NOTE: THIS IS THE IMPOSTER WHO MANAGES THE VARIABLES BEHIND THE SCENESE!! DONT BELIEVE THIS CODE! IT TRAPPED ME FOR
+    // 8 HRS TRYING TO FIND OUT WHY THE CODE IS LOOKING FOR "THIS.VARIABLES" FIRST. BEWARE YOU NAVIGATOR THE BELOW ONE IS SUS.
     evaluate(expression) {
         switch (expression.type) {
             case 'NumberLiteral':

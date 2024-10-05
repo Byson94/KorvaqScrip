@@ -7,6 +7,8 @@
 
 **tests** = this is where all the tests of new features happen.
 
+**libraries** = simple libraries that users can use to give their project more features.
+
 ### Files:
 **README.md** = an introduction to the language and guides on how to use it.
 
