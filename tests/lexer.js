@@ -15,13 +15,13 @@ class Lexer {
     nextToken() {
         while (this.pos < this.input.length) {
             const currentChar = this.input[this.pos];
-
+    
             // Skip whitespace
             if (/\s/.test(currentChar)) {
                 this.pos++;
                 continue;
             }
-
+    
             // Check for single-line comments
             if (currentChar === '/') {
                 if (this.input[this.pos + 1] === '/') {
@@ -32,7 +32,7 @@ class Lexer {
                     continue;
                 }
             }
-
+    
             // Check for boolean literals
             if (this.input.startsWith('true', this.pos)) {
                 this.pos += 4; // Move position past "true"
@@ -42,7 +42,7 @@ class Lexer {
                 this.pos += 5; // Move position past "false"
                 return { value: false, type: TokenType.Boolean };
             }
-
+    
             // Check for numbers, strings, keywords, operators, and punctuation
             if (/\d/.test(currentChar)) {
                 return this.readNumber();
@@ -53,7 +53,7 @@ class Lexer {
             if (/[a-zA-Z_]/.test(currentChar)) {
                 return this.readKeywordOrIdentifier();
             }
-
+    
             // Handle operators and punctuation
             if (currentChar === '=') {
                 this.pos++;
@@ -71,9 +71,10 @@ class Lexer {
                 this.pos++;
                 return { value: ')', type: TokenType.CloseParen };
             }
+            // Ignore semicolon
             if (currentChar === ';') {
                 this.pos++;
-                return { value: ';', type: TokenType.Semicolon };
+                continue; // Skip semicolon
             }
             if (currentChar === '{') {
                 this.pos++;
@@ -83,7 +84,7 @@ class Lexer {
                 this.pos++;
                 return { value: '}', type: TokenType.CloseBrace };
             }
-
+    
             // Handle array syntax
             if (currentChar === '[') {
                 this.pos++;
@@ -97,12 +98,12 @@ class Lexer {
                 this.pos++;
                 return { value: ',', type: TokenType.Comma };
             }
-
+    
             // Handle binary operators
             if (['+', '-', '*', '/'].includes(currentChar)) {
                 return this.readBinaryOperator(currentChar);
             }
-
+    
             // Handle comparison operators
             if (currentChar === '>') {
                 return this.readComparisonOperator('>');
@@ -110,7 +111,7 @@ class Lexer {
             if (currentChar === '<') {
                 return this.readComparisonOperator('<');
             }
-
+    
             // Handle logical operators
             if (currentChar === '&' && this.input[this.pos + 1] === '&') {
                 this.pos += 2; // Move past '&&'
@@ -120,16 +121,16 @@ class Lexer {
                 this.pos += 2; // Move past '||'
                 return { value: '||', type: TokenType.LogicalOr };
             }
-
+    
             // Handle not equal operator
             if (currentChar === '!' && this.input[this.pos + 1] === '=') {
                 this.pos += 2; // Move past '!='
                 return { value: '!=', type: TokenType.NotEquals };
             }
-
+    
             throw new Error(`Unexpected character: ${currentChar}`);
         }
-
+    
         return null; 
     }
 

@@ -405,11 +405,13 @@ class Interpreter {
             case '**':
                 return left ** right;
             case '+': 
-                return String(left) + String(right);
+                return left + right || String(left) + String(right) ; 
             case '-': 
                 return left - right;
             case '*': 
                 return left * right;
+            case '/': 
+            return left / right;
             default:
                 throw new Error(`Unknown operator: ${expression.operator}`);
         }

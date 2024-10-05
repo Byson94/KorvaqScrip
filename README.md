@@ -97,7 +97,7 @@ Boolean values can be `true` or `false`.
 
 **Example**:
 ```korvaq
-let isActive = true;
+let isActive = true
 ```
 
 ## Control Structures
@@ -108,9 +108,9 @@ The `if` and `else` keywords allow for conditional execution of code blocks.
 **Example**:
 ```korvaq
 if (x > 5) {
-    show "x is greater than 5";
+    show "x is greater than 5"
 } else {
-    show "x is less than or equal to 5";
+    show "x is less than or equal to 5"
 }
 ```
 
@@ -131,7 +131,7 @@ The `While` statement also does  iteration, but it requires a condition to be me
 example = false
 while (example == false) {
     show "Example is false!"
-    example = true;
+    example = true
 }
 ```
 
@@ -144,7 +144,7 @@ Functions are declared using the `func` keyword. They can accept parameters and 
 **Example**:
 ```korvaq
 func add(a, b) {
-    return a + b;
+    return a + b
 }
 let result = add(5, 10); // result is 15
 ```
@@ -154,7 +154,7 @@ The `show` keyword is used to print values to the console.
 
 **Example**:
 ```korvaq
-show "Hello, World!";
+show "Hello, World!"
 ```
 
 ## Expressions
@@ -164,8 +164,8 @@ Variables can be assigned values using the `=` operator.
 
 **Example**:
 ```korvaq
-let a = 10;
-let b = 20;
+let a = 10
+let b = 20
 a = b; // a is now 20
 ```
 
@@ -185,7 +185,7 @@ Functions can be called by their name followed by parentheses, with arguments pa
 
 **Example**:
 ```korvaq
-let result = add(5, 10); // Calls the add function
+let result = add(5, 10) // Calls the add function
 ```
 
 ## Arrays
@@ -193,7 +193,7 @@ Arrays are defined using square brackets (`[]`) and can hold multiple values.
 
 **Example**:
 ```korvaq
-let numbers = [1, 2, 3, 4, 5];
+let numbers = [1, 2, 3, 4, 5]
 ```
 
 ## Comments
