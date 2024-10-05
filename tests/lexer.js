@@ -135,18 +135,31 @@ class Lexer {
 
     readKeywordOrIdentifier() {
         let idStr = '';
-        while (this.pos < this.input.length && /[a-zA-Z_]/.test(this.input[this.pos])) {
+        
+        // Allow the first character to be a letter or underscore
+        if (/[a-zA-Z_]/.test(this.input[this.pos])) {
+            idStr += this.input[this.pos++];
+        } else {
+            throw new Error(`Invalid identifier start: ${this.input[this.pos - 1]} at position ${this.pos - 1}`);
+        }
+    
+        // Allow subsequent characters to be letters, digits, or underscores
+        while (this.pos < this.input.length && /[a-zA-Z0-9_]/.test(this.input[this.pos])) {
             idStr += this.input[this.pos++];
         }
-
+    
         // Check for restricted keywords
         if (this.restrictedKeywords.has(idStr) && idStr !== 'delvar all') {
             throw new Error(`Restricted keyword used: ${idStr}`);
         }
-        
 
+        if (idStr === 'add' || idStr === 'remove') {
+            return { value: idStr, type: TokenType.MethodCall };
+        }
+    
+        // Token identification
         switch (idStr) {
-            case 'delvar': 
+            case 'delvar':
                 return { value: idStr, type: TokenType.DeleteVar };
             case 'func':
                 return { value: idStr, type: TokenType.Func };

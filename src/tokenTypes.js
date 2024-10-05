@@ -19,6 +19,10 @@ const TokenType = {
     StrictNotEquals: 'StrictNotEquals', // For !==
     LogicalAnd: 'LOGICAL_AND',
     LogicalOr: 'LOGICAL_OR',
+    AddMethod: 'AddMethod',
+    Dot: 'Dot',
+    RemoveMethod: 'RemoveMethod',
+    MethodCall: 'MethodCall',
     Not: 'NOT',
     GreaterThanOrEqual: 'GreaterThanOrEqual',
     LessThan: 'LessThan',

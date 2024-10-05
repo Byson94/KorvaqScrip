@@ -83,24 +83,50 @@ class Parser {
         return { type: 'DeleteVariable', name: identifier.value }; // Return a DeleteVariable statement node
     }    
 
+    peek() {
+        // Temporarily store the current token
+        const current = this.currentToken;
+        const nextToken = this.lexer.nextToken(); // Get the next token
+        this.currentToken = current; // Restore the current token
+        return nextToken; // Return the next token
+    }
+    
+
     parseFunctionDeclaration() {
         this.expect(TokenType.Func); // Ensure we see the 'func' token
         const functionName = this.expect(TokenType.Identifier); // Expect an identifier for the function name
         this.expect(TokenType.OpenParen); // Expect opening parenthesis
-        this.expect(TokenType.CloseParen); // Expect closing parenthesis (if no parameters)
-        this.expect(TokenType.OpenBrace); // Expect opening brace
-
+    
+        const params = [];
+        // Check if the next token is a CloseParen to allow empty parameter lists
+        while (this.currentToken && this.currentToken.type !== TokenType.CloseParen) {
+            const param = this.expect(TokenType.Identifier); // Expect an identifier for each parameter
+            params.push({ type: 'Identifier', name: param.value });
+    
+            // Only continue if the next token is a comma
+            if (this.currentToken.type === TokenType.Comma) {
+                this.expect(TokenType.Comma);
+            } else {
+                break; // Exit if the next token is not a comma
+            }
+        }
+    
+        this.expect(TokenType.CloseParen); // Expect closing parenthesis
+        this.expect(TokenType.OpenBrace);  // Expect opening brace for the function body
+    
         // Parse the body of the function
-        const functionBody = this.parseBlock(); // Adjust to parse multiple statements
-
-        this.expect(TokenType.CloseBrace); // Expect closing brace
+        const functionBody = this.parseBlock();  // Adjust to parse multiple statements
+    
+        this.expect(TokenType.CloseBrace);  // Expect closing brace
     
         return {
             type: 'FunctionDeclaration',
             name: functionName.value,
+            params: params,  // Store the parsed parameters
             body: functionBody,
         };
     }
+    
 
     parseBlock() {
         const statements = [];
@@ -168,7 +194,7 @@ class Parser {
 
     parseAssignmentOrExpression() {
         const identifier = this.expect(TokenType.Identifier); // Use `expect` instead of `consume`
-        
+    
         // Check if it's a function call (next token is an open parenthesis)
         if (this.currentToken.type === TokenType.OpenParen) {
             // Consume the '('
@@ -176,10 +202,14 @@ class Parser {
     
             const args = [];
             // Parse function arguments (if any)
-            if (this.currentToken.type !== TokenType.CloseParen) {
-                do {
-                    args.push(this.parseExpression());
-                } while (this.currentToken.type === TokenType.Comma && this.expect(TokenType.Comma)); // Use `expect`
+            while (this.currentToken.type !== TokenType.CloseParen) {
+                args.push(this.parseExpression());
+                // Ensure the next token is a comma or the close parenthesis
+                if (this.currentToken.type === TokenType.Comma) {
+                    this.expect(TokenType.Comma);
+                } else if (this.currentToken.type === TokenType.CloseParen) {
+                    break; // Exit if it's the closing parenthesis
+                }
             }
     
             // Consume the ')'
@@ -207,6 +237,7 @@ class Parser {
             value 
         };
     }
+    
 
     parsePrintStatement() {
         this.expect(TokenType.Show);

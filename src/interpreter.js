@@ -3,6 +3,7 @@ class Interpreter {
         this.variables = {};  // Store values
         this.immutables = new Set();  // Track immutable variables
         this.functions = {};  // Store functions
+        window.localScope = this.localScope = {};  // Local variables during function execution
     }
 
     isNode() {
@@ -11,35 +12,70 @@ class Interpreter {
     
 
     handleFunctionDeclaration(statement) {
-        this.functions[statement.name] = statement;
-    }
+        // Save the function with its name, params, and body
+        this.functions[statement.name] = {
+            params: statement.params,  // Store the function parameters
+            body: statement.body,
+        };
+    }    
 
     executeFunctionCall(node) {
         const func = this.functions[node.name];
         if (!func) {
             throw new Error(`Function "${node.name}" is not defined.`);
         }
-        
-        const localScope = {};
-        if (func.params) {
-            for (let i = 0; i < func.params.length; i++) {
-                localScope[func.params[i].name] = this.evaluate(node.arguments[i]);
+    
+        const args = node.args || [];
+        const params = func.params || [];
+    
+        // Populate localScope with arguments or "void"
+        for (let i = 0; i < params.length; i++) {
+            if (i < args.length) {
+                const arg = args[i];
+                if (arg.type === 'Identifier') {
+                    const value = this.variables[arg.name];
+                    this.localScope[params[i].name] = value !== undefined ? value : "void"; // Default to "void" if undefined
+                } else {
+                    this.localScope[params[i].name] = this.evaluate(arg);
+                }
+            } else {
+                // If no argument provided for this parameter, assign "void"
+                this.localScope[params[i].name] = "void";
             }
         }
-        
-        return this.executeFunctionBlock(func.body, localScope);
+    
+        // Execute the function body with the local scope
+        this.executeFunctionBlock(func.body, this.localScope);
+    }
+    
+    executeFunctionBlock(body) {
+        for (const statement of body) {
+            this.executeStatement(statement); 
+        }
+    }
+    
+    executeStatement(statement) {
+        if (statement.type === 'PrintStatement') {
+            console.log(this.evaluate(statement.value));
+        }
+        // Add more statement handlers as needed...
+    }
+    
+    evaluate(value) {
+        if (value.type === 'Identifier') {
+            if (this.localScope?.[value.name] !== undefined) {
+                return this.localScope[value.name]; // Return from local scope
+            }
+            if (this.variables?.[value.name] !== undefined) {
+                return this.variables[value.name]; // Fallback to global variables
+            }
+            throw new Error(`Variable "${value.name}" is not defined.`);
+        }
+    
+        // Add evaluation logic for other types if needed...
     }
     
     
-    executeFunctionBlock(statements, localScope) {
-        for (const statement of statements) {
-            if (statement.type === 'ReturnStatement') {
-                return this.evaluate(statement.value, localScope);
-            }
-            this.execute(statement, localScope);
-        }
-    }
-
     visitIfStatement(node) {
         // Evaluate the condition using the newly added comparisons
         const conditionResult = this.evaluate(node.condition);
@@ -288,6 +324,8 @@ class Interpreter {
         }
     }
 
+    // NOTE: THIS IS THE IMPOSTER WHO MANAGES THE VARIABLES BEHIND THE SCENESE!! DONT BELIEVE THIS CODE IT TRAPPED ME FOR
+    // 8 HRS TRYING TO FIND OUT WHY THE CODE IS LOOKING FOR THIS.VARIABLES FIRST. BEWARE YOU NAVIGATOR THE BELOW ONE IS SUS.
     evaluate(expression) {
         switch (expression.type) {
             case 'NumberLiteral':
@@ -298,10 +336,13 @@ class Interpreter {
                 return expression.value;  // Ensure it returns the boolean value
             case 'Identifier':
                 // Check if the variable exists
-                if (this.variables.hasOwnProperty(expression.name)) {
+                if (this.localScope.hasOwnProperty(expression.name)) {
+                    return this.localScope[expression.name];
+                } else if (this.variables.hasOwnProperty(expression.name)) {
                     return this.variables[expression.name]; // Return the exact value
+                } else {
+                    throw new Error(`Variable "${expression.name}" is not defined.`);
                 }
-                throw new Error(`Variable "${expression.name}" is not defined.`);
             case 'BinaryExpression':
                 return this.evaluateBinaryExpression(expression);
             case 'FunctionCall':
