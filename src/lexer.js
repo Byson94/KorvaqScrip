@@ -5,7 +5,7 @@ class Lexer {
         this.pos = 0;
         this.input = input;
         this.restrictedKeywords = new Set([
-            'var', 'const', 'while', 'for', 'switch', 'case', 'break', 
+            'var', 'const', 'for', 'switch', 'case', 'break', 
             'continue', 'default', 'class', 'extends', 'super', 'this', 
             'typeof', 'instanceof', 'void', 'delete', 'new', 'in', 
             'try', 'catch', 'finally', 'throw', 'debugger',
@@ -208,6 +208,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.Show };
             case 'loop':
                 return { value: idStr, type: TokenType.Loop };
+            case 'while':
+                return { value: idStr, type: TokenType.While };
             case 'start':
                 return { value: idStr, type: TokenType.Start };
             case 'end':

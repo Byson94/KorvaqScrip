@@ -24,6 +24,8 @@ class Parser {
                 statements.push(this.parseVariableDeclaration());
             } else if (this.currentToken.type === TokenType.Show) {
                 statements.push(this.parsePrintStatement());
+            } else if (this.currentToken.type === TokenType.While) {
+                statements.push(this.parseWhileStatement());
             } else if (this.currentToken.type === TokenType.Loop) {
                 statements.push(this.parseRepeatStatement());
             } else if (this.currentToken.type === TokenType.Identifier) {
@@ -280,6 +282,27 @@ class Parser {
             block 
         };
     }
+    
+    parseWhileStatement() {
+        this.expect(TokenType.While);           // Expect 'while' keyword
+        this.expect(TokenType.OpenParen);        // Expect '('
+        
+        const condition = this.parseExpression(); // Parse the condition expression
+        this.expect(TokenType.CloseParen);        // Expect ')'
+
+        this.expect(TokenType.OpenBrace);  
+        
+        const block = this.parseBlock();          // Parse the block of code inside '{}'
+
+        this.expect(TokenType.CloseBrace);
+        
+        return { 
+            type: 'WhileStatement', 
+            condition, 
+            block 
+        };
+    }
+    
     
 
     parseExpression() {
