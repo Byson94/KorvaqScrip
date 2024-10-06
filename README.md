@@ -143,10 +143,11 @@ Functions are declared using the `func` keyword. They can accept parameters and 
 
 **Example**:
 ```korvaq
-func add(a, b) {
-    return a + b
+func addVal(a, b) {
+    returns = a + b
 }
-let result = add(5, 10); // result is 15
+addVal(5, 10); // result is 15
+show returns
 ```
 
 ## Output
@@ -185,7 +186,18 @@ Functions can be called by their name followed by parentheses, with arguments pa
 
 **Example**:
 ```korvaq
-let result = add(5, 10) // Calls the add function
+func add1(a, b) {
+    show "example"
+    sum = a + b
+}
+
+add1(5, 10) // Calls the add function
+
+show sum
+
+delvar all
+
+// NOTE: "ADD" IS A RESTRICTED KEYWORD
 ```
 
 ## Arrays
@@ -243,24 +255,30 @@ if (number % 2 == 0) {
 } else {
     show "Odd";
 }
+
+// This is result in even because % operation finds the remainder of a division operation
+// So due to this reason, the 4 / 2 = 2 with remainder 0 and as the remainder is 0, it outputs "Even"
 ```
 
 **Example 2**: A function to calculate the sum of two numbers.
 ```korvaq
 func sum(a, b) {
-    return a + b;
+    returns =  a + b;
 }
 
-let result = sum(5, 10); // result is 15
-show result;
+sum(6, 2)
+show returns;
+
+
+// NOTE: "RETURN" IS A RESTRICTED KEYWORD, THATS WHY I USED "RETURNS"
 ```
 
 **Example 3**: Looping through an array.
 ```korvaq
 let fruits = ["Apple", "Banana", "Cherry"];
 
-loop i, 0, 2 {
-    show fruits[i]; // Displays each fruit
+loop (i, 0, 2) {
+    show fruits; // Displays all fruits 2 times
 }
 ```
 

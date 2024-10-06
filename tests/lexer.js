@@ -100,7 +100,7 @@ class Lexer {
             }
     
             // Handle binary operators
-            if (['+', '-', '*', '/'].includes(currentChar)) {
+            if (['+', '-', '*', '/', '%'].includes(currentChar)) {
                 return this.readBinaryOperator(currentChar);
             }
     
@@ -121,7 +121,7 @@ class Lexer {
                 this.pos += 2; // Move past '||'
                 return { value: '||', type: TokenType.LogicalOr };
             }
-    
+
             // Handle not equal operator
             if (currentChar === '!' && this.input[this.pos + 1] === '=') {
                 this.pos += 2; // Move past '!='

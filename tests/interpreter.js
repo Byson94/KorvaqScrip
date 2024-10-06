@@ -3,7 +3,7 @@ class Interpreter {
         this.variables = {};  // Store values
         this.immutables = new Set();  // Track immutable variables
         this.functions = {};  // Store functions
-        window.localScope = this.localScope = {};  // Local variables during function execution
+        this.localScope = {};  // Local variables during function execution
     }
 
     isNode() {
@@ -385,7 +385,7 @@ class Interpreter {
             case '===':
                 return left === right;
             case '==':
-                return left == right; // Note that this uses coercion
+                return left == right;
             case '!=':
                 return left !== right;
             case '!==':
@@ -411,7 +411,9 @@ class Interpreter {
             case '*': 
                 return left * right;
             case '/': 
-            return left / right;
+                return left / right;
+            case '%': 
+                return left % right;
             default:
                 throw new Error(`Unknown operator: ${expression.operator}`);
         }
