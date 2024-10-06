@@ -7,7 +7,7 @@ class Lexer {
         this.restrictedKeywords = new Set([
             'var', 'const', 'for', 'switch', 'case', 'break', 
             'continue', 'default', 'class', 'extends', 'super', 'this', 
-            'typeof', 'instanceof', 'void', 'delete', 'new', 'in', 
+            'typeof', 'instanceof', 'delete', 'new', 'in', 
             'try', 'catch', 'finally', 'throw', 'debugger',
         ]);
     }
@@ -110,6 +110,11 @@ class Lexer {
             }
             if (currentChar === '<') {
                 return this.readComparisonOperator('<');
+            }
+
+            if (currentChar === '*' && this.input[this.pos + 1] === '*') {
+                this.pos += 2; // Move past '**'
+                return { value: '**', type: TokenType.BinaryOperator };
             }
     
             // Handle logical operators

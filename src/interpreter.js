@@ -99,10 +99,12 @@ class Interpreter {
     }
 
     async executeAsyncBlock(asyncBlock) {
-        // Execute each statement in the async block
-        for (const statement of asyncBlock.statements) {
-            await this.execute(statement); // Ensure each statement is awaited
-        }
+        // Execute each statement in the async block as an asynchronous operation
+        const promises = asyncBlock.statements.map(statement => {
+            return Promise.resolve().then(() => this.execute(statement));
+        });
+        // Wait for all statements to complete
+        await Promise.all(promises);
     }
 
     execute(statement) {
@@ -138,6 +140,9 @@ class Interpreter {
                 break;
             case 'AsyncBlock':
                 return this.executeAsyncBlock(statement);
+            case 'VoidLiteral':
+                console.log('this was triggered!')
+                return 'void'
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
@@ -209,7 +214,6 @@ class Interpreter {
     
         // Delete the variable from the variables object
         delete this.variables[varName];
-        console.log(`Variable "${varName}" has been deleted.`);
     }
     
     // Add a new method to access elements in an array
@@ -359,6 +363,8 @@ class Interpreter {
                     return this.localScope[expression.name];
                 } else if (this.variables.hasOwnProperty(expression.name)) {
                     return this.variables[expression.name]; // Return the exact value
+                } else if ('void' === expression.name) {
+                    return "void";
                 } else {
                     throw new Error(`Variable "${expression.name}" is not defined.`);
                 }

@@ -59,21 +59,6 @@ class Parser {
         }
         throw new Error(`Expected token type ${tokenType}, but found ${token ? token.type : 'none'}`);
     }
-
-    parseAsyncStatement() {
-        this.expect(TokenType.Async); // Expect the async token
-        this.expect(TokenType.OpenBrace); // Expect the opening brace
-    
-        // Parse the block of statements within the async block
-        const statements = this.parseBlock(); // Parse the block of statements
-    
-        this.expect(TokenType.CloseBrace); // Expect the closing brace
-    
-        return {
-            type: 'AsyncBlock',
-            statements,
-        };
-    }
     
 
     deleteVarStatement() {
@@ -138,24 +123,48 @@ class Parser {
         return statements;
     }
 
-    parseStatement() {
-        if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
+// Parse an async statement
+parseAsyncStatement() {
+    this.expect(TokenType.Async); // Expect the async token
+    this.expect(TokenType.OpenBrace); // Expect the opening brace
+
+    // Parse the block of statements within the async block
+    const statements = this.parseBlock(); // Parse the block of statements
+
+    this.expect(TokenType.CloseBrace); // Expect the closing brace
+
+    return {
+        type: 'AsyncBlock',
+        statements,
+    };
+}
+
+// General statement parsing
+parseStatement() {
+    // Here, ensure you can recognize all statement types, including control flow statements.
+    switch (this.currentToken.type) {
+        case TokenType.Let:
+        case TokenType.Make:
             return this.parseVariableDeclaration();
-        } else if (this.currentToken.type === TokenType.DeleteVar) {
+        case TokenType.DeleteVar:
             return this.deleteVarStatement();
-        } else if (this.currentToken.type === TokenType.Show) {
+        case TokenType.Show:
             return this.parsePrintStatement();
-        } else if (this.currentToken.type === TokenType.If) {
+        case TokenType.If:
             return this.parseIfStatement();
-        } else if (this.currentToken.type === TokenType.Loop) {
+        case TokenType.While:  // Handle while
+            return this.parseWhileStatement();
+        case TokenType.Loop:   // Handle loop
             return this.parseRepeatStatement();
-        } else if (this.currentToken.type === TokenType.Func) {
-            return this.parseFunctionDeclaration(); // Handle function declaration here
-        } else if (this.currentToken.type === TokenType.Identifier) {
+        case TokenType.Func:   // Handle function declaration
+            return this.parseFunctionDeclaration();
+        case TokenType.Identifier:
             return this.parseAssignmentOrExpression();
-        }
-        throw new Error(`Unexpected statement: ${this.currentToken.value}`);
+        default:
+            throw new Error(`Unexpected statement: ${this.currentToken.value}`);
     }
+}
+
 
     parseVariableDeclaration() {
         const isImmutable = this.currentToken.type === TokenType.Make;
@@ -163,11 +172,6 @@ class Parser {
         const name = this.expect(TokenType.Identifier);
         this.expect(TokenType.Equals);
         const value = this.parseExpression(); // Ensure this evaluates correctly
-    
-        // Check for the semicolon if present
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.expect(TokenType.Semicolon);
-        }
     
         return { type: 'VariableDeclaration', name: name.value, value, isImmutable };
     }
@@ -195,7 +199,7 @@ class Parser {
     }
 
     parseAssignmentOrExpression() {
-        const identifier = this.expect(TokenType.Identifier); // Use `expect` instead of `consume`
+        const identifier = this.expect(TokenType.Identifier);
     
         // Check if it's a function call (next token is an open parenthesis)
         if (this.currentToken.type === TokenType.OpenParen) {
@@ -227,11 +231,6 @@ class Parser {
         // If not a function call, it's an assignment
         this.expect(TokenType.Equals); // Use `expect` for assignment
         const value = this.parseExpression();
-    
-        // OPTIONAL: Check if the next token is a semicolon and consume it if present
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.expect(TokenType.Semicolon); // Use `expect`
-        }
     
         return { 
             type: 'Assignment', 

@@ -6,6 +6,7 @@ const TokenType = {
     Show: 'Show',
     Loop: 'Loop',
     While: 'While',
+    Void: 'Void',
     OpenParen: 'OpenParen',
     CloseParen: 'CloseParen',
     OpenBrace: 'OpenBrace',
