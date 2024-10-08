@@ -1,6 +1,6 @@
 # Korvaq Libraries
 
-This folder contains some libraries that can be used in Korvaqscrip (.kq) files. **These libraries in this folder are completely free and do not require any attribution!** If you are interested in improving these libraries, just do a pull request on the GitHub page to make your changes!
+This folder contains some libraries that can be used in Korvaqscrip (.kq) files. **These libraries in this folder are completely free and do not require any attribution!** If you are interested in improving these libraries, just do a pull request on the GitHub page to make your changes to the contents folder!
 
 ## What are Libraries?
 
