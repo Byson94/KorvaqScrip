@@ -230,6 +230,10 @@ class Lexer {
                 return { value: idStr, type: TokenType.Async };
             case 'random':
                 return { value: idStr, type: TokenType.Random };
+            case 'arrayadd':
+                return { value: idStr, type: TokenType.ArrayAdd };
+            case 'read':
+                return { value: idStr, type: TokenType.Read };
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

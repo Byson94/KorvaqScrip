@@ -143,6 +143,12 @@ class Interpreter {
             case 'VoidLiteral':
                 console.log('this was triggered!')
                 return 'void'
+            case 'ReadStatement':
+                this.handleReadStatement(statement);
+                break;
+            case 'ArrayAdd':  // New case for adding to an array
+                this.addToArray(statement.array, statement.element);
+                break;
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
@@ -235,12 +241,37 @@ class Interpreter {
         if (this.immutables.has(statement.name)) {
             throw new Error(`Variable "${statement.name}" is immutable and cannot be reassigned.`);
         }
-        
-        // If mutable, assign the new value
+    
+        // Evaluate the value
         const value = this.evaluate(statement.value);
+    
+        // Check if the value is an array
+        if (Array.isArray(value)) {;
+            const uselessvariablethatisherefornoreasonbutjusttoattractpeopleduetoitsmassivelenght = null;
+        }
+    
+        // If mutable, assign the new value
         this.variables[statement.name] = value;
     }
     
+    addToArray(arrayName, value) {
+        // Check if the variable is defined
+        if (!this.variables.hasOwnProperty(arrayName)) {
+            throw new Error(`Array "${arrayName}" is not defined.`);
+        }
+    
+        // Check if the variable is an array
+        const array = this.variables[arrayName];
+        if (!Array.isArray(array)) {
+            throw new Error(`Variable "${arrayName}" is not an array.`);
+        }
+    
+        // Evaluate the value to be added
+        const evaluatedValue = this.evaluate(value); // Ensure this works correctly
+    
+        // Push the evaluated value to the array
+        array.push(evaluatedValue);
+    }    
 
     async handleConnect(statement) {
         const filePath = statement.filePath;
@@ -294,17 +325,36 @@ class Interpreter {
             }
         }
     }
+
+    async handleReadStatement(statement) {
+        const filePath = statement.filePath;
+    
+        if (this.isNode()) {
+            // For Node.js environment
+            const fs = await import('fs').then(module => module.promises);
+            try {
+                const data = await fs.readFile(filePath, 'utf8');
+                return data;
+            } catch (error) {
+                throw new Error('Error reading file: ' + error.message);
+            }
+        } else {
+            throw new Error('File reading is not supported in the web environment.');
+        }
+    }
+    
     
     handlePrint(statement) {
         const value = this.evaluate(statement.value);
         if (Array.isArray(value)) {
-            console.log(`[${value.join(', ')}]`); // Correctly formats the array
+            console.log(JSON.stringify(value));
         } else if (typeof value === 'boolean') {
-            console.log(value); // Directly print the boolean
+            console.log(value);
         } else {
-            console.log(value); // Print the value directly for non-array and non-boolean types
+            console.log(value);
         }
-    }    
+    }
+     
 
     handleRepeat(statement) {
         // Evaluate the start and end values of the loop
@@ -356,18 +406,17 @@ class Interpreter {
             case 'StringLiteral':
                 return expression.value;
             case 'BooleanLiteral':
-                return expression.value;  // Ensure it returns the boolean value
+                return expression.value;
             case 'Identifier':
-                // Check if the variable exists
                 if (this.localScope.hasOwnProperty(expression.name)) {
                     return this.localScope[expression.name];
                 } else if (this.variables.hasOwnProperty(expression.name)) {
-                    return this.variables[expression.name]; // Return the exact value
-                } else if ('void' === expression.name) {
-                    return "void";
+                    return this.variables[expression.name];
                 } else {
                     throw new Error(`Variable "${expression.name}" is not defined.`);
                 }
+            case 'ReadStatement':  // Add handling for ReadStatement
+                return this.handleReadStatement(expression);
             case 'BinaryExpression':
                 return this.evaluateBinaryExpression(expression);
             case 'FunctionCall':
@@ -377,7 +426,8 @@ class Interpreter {
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }
-    }       
+    }
+    
     
     evaluateBinaryExpression(expression) {
         const left = this.evaluate(expression.left);

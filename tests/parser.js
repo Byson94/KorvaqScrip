@@ -14,8 +14,12 @@ class Parser {
                 statements.push(this.parseFunctionDeclaration());
             } else if (this.currentToken.type === TokenType.If) {
                 statements.push(this.parseIfStatement());
-            } else if (this.currentToken.type === TokenType.Connect) { // Add this line
-                statements.push(this.parseConnectStatement()); // Add this line
+            } else if (this.currentToken.type === TokenType.Connect) {  
+                statements.push(this.parseConnectStatement());
+            } else if (this.currentToken.type === TokenType.ArrayAdd) {
+                statements.push(this.parseArrayAdd());
+            } else if (this.currentToken.type === TokenType.Read) {  
+                statements.push(this.parseReadStatement());
             } else if (this.currentToken.type === TokenType.Async) {
                 statements.push(this.parseAsyncStatement());
             } else if (this.currentToken.type === TokenType.DeleteVar) {
@@ -38,13 +42,45 @@ class Parser {
         return statements;
     }
 
+    parseArrayAdd() {
+        this.expect(TokenType.ArrayAdd); // Expect the ArrayAdd token
+        const arrayIdentifier = this.expect(TokenType.Identifier); // First identifier (array name)
+    
+        // Parse the second argument, which can be an identifier, a string, or a number
+        let element;
+        if (this.currentToken.type === TokenType.Identifier) {
+            const elementIdentifier = this.expect(TokenType.Identifier);
+            element = { type: 'Identifier', value: elementIdentifier.value };
+        } else if (this.currentToken.type === TokenType.String) {
+            const stringLiteral = this.expect(TokenType.String);
+            element = { type: 'StringLiteral', value: stringLiteral.value };
+        } else if (this.currentToken.type === TokenType.Number) {
+            const numberLiteral = this.expect(TokenType.Number);
+            element = { type: 'NumberLiteral', value: numberLiteral.value };
+        } else {
+            throw new Error("Expected Identifier, String, or Number for array element");
+        }
+    
+        // Return an object representing the ArrayAdd operation
+        return { 
+            type: 'ArrayAdd', 
+            array: arrayIdentifier.value, 
+            element: element 
+        };
+    }
+    
+    
+
+    parseReadStatement() {
+        this.expect(TokenType.Read)   
+        const filePath = this.expect(TokenType.String)
+
+        return { type: 'ReadStatement', filePath: filePath.value }
+    }
+
     parseConnectStatement() {
         this.expect(TokenType.Connect); // Expect the connect token
         const filePath = this.expect(TokenType.String); // Expect a string token for the file path
-    
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.expect(TokenType.Semicolon); // Consume the semicolon if present
-        }
     
         return { type: 'ConnectStatement', filePath: filePath.value }; // Return a ConnectStatement node
     }
@@ -123,47 +159,47 @@ class Parser {
         return statements;
     }
 
-// Parse an async statement
-parseAsyncStatement() {
-    this.expect(TokenType.Async); // Expect the async token
-    this.expect(TokenType.OpenBrace); // Expect the opening brace
+    // Parse an async statement
+    parseAsyncStatement() {
+        this.expect(TokenType.Async); // Expect the async token
+        this.expect(TokenType.OpenBrace); // Expect the opening brace
 
-    // Parse the block of statements within the async block
-    const statements = this.parseBlock(); // Parse the block of statements
+        // Parse the block of statements within the async block
+        const statements = this.parseBlock(); // Parse the block of statements
 
-    this.expect(TokenType.CloseBrace); // Expect the closing brace
+        this.expect(TokenType.CloseBrace); // Expect the closing brace
 
-    return {
-        type: 'AsyncBlock',
-        statements,
-    };
-}
-
-// General statement parsing
-parseStatement() {
-    // Here, ensure you can recognize all statement types, including control flow statements.
-    switch (this.currentToken.type) {
-        case TokenType.Let:
-        case TokenType.Make:
-            return this.parseVariableDeclaration();
-        case TokenType.DeleteVar:
-            return this.deleteVarStatement();
-        case TokenType.Show:
-            return this.parsePrintStatement();
-        case TokenType.If:
-            return this.parseIfStatement();
-        case TokenType.While:  // Handle while
-            return this.parseWhileStatement();
-        case TokenType.Loop:   // Handle loop
-            return this.parseRepeatStatement();
-        case TokenType.Func:   // Handle function declaration
-            return this.parseFunctionDeclaration();
-        case TokenType.Identifier:
-            return this.parseAssignmentOrExpression();
-        default:
-            throw new Error(`Unexpected statement: ${this.currentToken.value}`);
+        return {
+            type: 'AsyncBlock',
+            statements,
+        };
     }
-}
+
+    // General statement parsing
+    parseStatement() {
+        // Here, ensure you can recognize all statement types, including control flow statements.
+        switch (this.currentToken.type) {
+            case TokenType.Let:
+            case TokenType.Make:
+                return this.parseVariableDeclaration();
+            case TokenType.DeleteVar:
+                return this.deleteVarStatement();
+            case TokenType.Show:
+                return this.parsePrintStatement();
+            case TokenType.If:
+                return this.parseIfStatement();
+            case TokenType.While:  // Handle while
+                return this.parseWhileStatement();
+            case TokenType.Loop:   // Handle loop
+                return this.parseRepeatStatement();
+            case TokenType.Func:   // Handle function declaration
+                return this.parseFunctionDeclaration();
+            case TokenType.Identifier:
+                return this.parseAssignmentOrExpression();
+            default:
+                throw new Error(`Unexpected statement: ${this.currentToken.value}`);
+        }
+    }
 
 
     parseVariableDeclaration() {
@@ -171,7 +207,14 @@ parseStatement() {
         this.expect(isImmutable ? TokenType.Make : TokenType.Let);
         const name = this.expect(TokenType.Identifier);
         this.expect(TokenType.Equals);
-        const value = this.parseExpression(); // Ensure this evaluates correctly
+        
+        // Check if the right-hand side is a `read` statement
+        let value;
+        if (this.currentToken.type === TokenType.Read) {
+            value = this.parseReadStatement();
+        } else {
+            value = this.parseExpression(); // Standard variable assignment
+        }
     
         return { type: 'VariableDeclaration', name: name.value, value, isImmutable };
     }
@@ -230,7 +273,12 @@ parseStatement() {
     
         // If not a function call, it's an assignment
         this.expect(TokenType.Equals); // Use `expect` for assignment
-        const value = this.parseExpression();
+        let value;
+        if (this.currentToken.type === TokenType.Read) {
+            value = this.parseReadStatement();
+        } else {
+            value = this.parseExpression(); // Standard variable assignment
+        }
     
         return { 
             type: 'Assignment', 

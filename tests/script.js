@@ -15,7 +15,7 @@ const interpreter = new Interpreter();
 // Function to prompt user for input
 function promptInput() {
     rl.question('> ', (input) => {
-        if (input.trim().toLowerCase() === 'exit') {
+        if (input.trim().toLowerCase() === '.exit') {
             console.log('Exiting...');
             rl.close();
             return;
@@ -35,4 +35,6 @@ function promptInput() {
 }
 
 // Start the input prompt
+console.log('Welcome to KorvaqShell!')
+console.log('Type .exit to quit')
 promptInput();
