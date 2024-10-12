@@ -9,4 +9,4 @@ A programming language that is simple to learn and easy to use due to its simple
 Tutorials: https://github.com/Byson94/KorvaqScrip/blob/main/BeginnersTutorial.md
 
 **Want to contribute to this project?**
-[Follow this link to get started!](https://github.com/Byson94/KorvaqScrip/wiki/Contributing-to-the-project)
+[Follow this documentation by github to get started!](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
