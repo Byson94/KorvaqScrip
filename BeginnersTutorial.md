@@ -5,26 +5,29 @@
 
 **NOTE:** In this documentation we have also added features that are under testing and development so some of the codes in this documentation wouldnt work!
 
+
+
 ## Table of Contents
+
 1. [Basic Syntax](#basic-syntax)
-2. [Variable Declarations](#variable-declarations)
-   - [Mutable Variables](#mutable-variables)
-   - [Immutable Variables](#immutable-variables)
-   - [Deleting Variables](#deleting-variables)
-3. [Data Types](#data-types)
+2. [Data Types](#data-types)
    - [Numbers](#numbers)
    - [Strings](#strings)
    - [Booleans](#booleans)
    - [Arrays](#arrays)
+3. [Variable Declarations](#variable-declarations)
+   - [Mutable Variables](#mutable-variables)
+   - [Immutable Variables](#immutable-variables)
+   - [Deleting Variables](#deleting-variables)
 4. [Control Structures](#control-structures)
    - [Conditional Statements](#conditional-statements)
    - [Loops](#loops)
-5. [Functions](#functions)
-6. [Output](#output)
-7. [Expressions](#expressions)
+5. [Expressions](#expressions)
    - [Assignments](#assignments)
    - [Binary Expressions](#binary-expressions)
    - [Function Calls](#function-calls)
+6. [Functions](#functions)
+7. [Output](#output)
 8. [Comments](#comments)
 9. [Linking Files](#linking-files)
 10. [Running Asynchronous](#running-asynchronous)
@@ -212,6 +215,24 @@ exampleArray = ["exampleValue"]
 arrayadd exampleArray "exampleValue2"
 
 show exampleArray // output: ["exampleValue","exampleValue2"]
+```
+
+We can also get the length of arrays by using `arraylength`
+
+**Example**:
+```
+let  numbers = [1, 2, 3, 4, 5]
+show  arraylength numbers // output: 5
+
+// If you want, then you can do "let x = arraylength numbers" to store the length in a variable
+```
+
+To get the value inside an array, we can use `arrayName[index]` for example:
+```
+let example = ["banana", "apple", "cherry"]
+let x = example[0] // this would get the value as "banana"
+let x = example[1] // this as "apple"
+let x = example[2] // this as "cherry"
 ```
 
 ## Comments

@@ -18,6 +18,8 @@ class Parser {
                 statements.push(this.parseConnectStatement());
             } else if (this.currentToken.type === TokenType.ArrayAdd) {
                 statements.push(this.parseArrayAdd());
+            } else if (this.currentToken.type === TokenType.ArrayLength) {
+                statements.push(this.parseArrayLength());
             } else if (this.currentToken.type === TokenType.Read) {  
                 statements.push(this.parseReadStatement());
             } else if (this.currentToken.type === TokenType.Async) {
@@ -69,7 +71,16 @@ class Parser {
         };
     }
     
+    parseArrayLength() {
+        this.expect(TokenType.ArrayLength); // Expect the ArrayAdd token
+        const arrayIdentifier = this.expect(TokenType.Identifier); // First identifier (array name)
     
+        // Return an object representing the ArrayAdd operation
+        return { 
+            type: 'ArrayLength', 
+            array: arrayIdentifier.value, 
+        };
+    }
 
     parseReadStatement() {
         this.expect(TokenType.Read)   
@@ -212,13 +223,17 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
-        } else {
+        } else if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseAssignmentOrExpression();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
+        } 
+        else {
             value = this.parseExpression(); // Standard variable assignment
         }
     
         return { type: 'VariableDeclaration', name: name.value, value, isImmutable };
     }
-    
 
     parseIfStatement() {
         this.consume(TokenType.If);
@@ -271,11 +286,27 @@ class Parser {
             };
         }
     
-        // If not a function call, it's an assignment
+        // Check if the next token is an open bracket (for array access)
+        if (this.currentToken.type === TokenType.OpenBracket) {
+            this.expect(TokenType.OpenBracket); // Consume the '['
+            
+            const index = this.parseExpression(); // Parse the index
+            this.expect(TokenType.CloseBracket); // Consume the ']'
+    
+            return { 
+                type: 'ArrayAccess', 
+                arrayName: identifier.value, 
+                index 
+            };
+        }
+    
+        // If not a function call or array access, it’s an assignment
         this.expect(TokenType.Equals); // Use `expect` for assignment
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
         } else {
             value = this.parseExpression(); // Standard variable assignment
         }
@@ -285,15 +316,19 @@ class Parser {
             name: identifier.value, 
             value 
         };
-    }
+    }    
     
 
     parsePrintStatement() {
         this.expect(TokenType.Show);
-        const value = this.parseExpression();
-    
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.expect(TokenType.Semicolon);
+        let value;
+        if (this.currentToken.type === TokenType.Read) {
+            value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
+        } 
+        else {
+            value = this.parseExpression(); // Standard variable assignment
         }
         
         return { type: 'PrintStatement', value };

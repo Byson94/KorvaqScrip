@@ -58,7 +58,6 @@ class Interpreter {
         if (statement.type === 'PrintStatement') {
             console.log(this.evaluate(statement.value));
         }
-        // Add more statement handlers as needed...
     }
     
     evaluate(value) {
@@ -123,6 +122,7 @@ class Interpreter {
                 break;
             case 'WhileStatement':
                 this.handleWhile(statement);
+                break;
             case 'IfStatement':
                 this.handleIfStatement(statement);
                 break;
@@ -149,9 +149,29 @@ class Interpreter {
             case 'ArrayAdd':  // New case for adding to an array
                 this.addToArray(statement.array, statement.element);
                 break;
+            case 'ArrayLength':
+                this.lengthOfArray(statement.array);
+                break;
+            case 'ArrayAccess':
+                return this.handleArrayAccess(statement); // Return the accessed value
+                
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
+    }
+
+    handleArrayAccess(statement) {
+        const arrayName = statement.arrayName; // The name of the array variable
+        const index = this.evaluate(statement.index); // Evaluate the index
+    
+        // Check if the index is a valid number
+        if (typeof index !== 'number' || index < 0) {
+            throw new Error(`Invalid index "${index}" for array "${arrayName}".`);
+        }
+    
+        // Get the array element using the new method
+        const element = this.getArrayElement(arrayName, index);
+        return element; // Return the accessed value if needed
     }
 
     handleIfStatement(statement) {
@@ -272,6 +292,20 @@ class Interpreter {
         // Push the evaluated value to the array
         array.push(evaluatedValue);
     }    
+
+    lengthOfArray(arrayName) {
+        if (!this.variables.hasOwnProperty(arrayName)) {
+            throw new Error(`Array "${arrayName}" is not defined.`);
+        }
+    
+        const array = this.variables[arrayName];
+        if (!Array.isArray(array)) {
+            throw new Error(`Variable "${arrayName}" is not an array.`);
+        }
+    
+        return array.length;
+    }
+    
 
     async handleConnect(statement) {
         const filePath = statement.filePath;
@@ -417,6 +451,10 @@ class Interpreter {
                 }
             case 'ReadStatement':  // Add handling for ReadStatement
                 return this.handleReadStatement(expression);
+            case 'ArrayLength':
+                return this.lengthOfArray(expression.array)
+            case 'ArrayAccess':
+                return this.handleArrayAccess(expression)
             case 'BinaryExpression':
                 return this.evaluateBinaryExpression(expression);
             case 'FunctionCall':

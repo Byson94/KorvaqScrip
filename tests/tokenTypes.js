@@ -45,6 +45,7 @@ const TokenType = {
     Async: 'Async',
     Read: 'Read',
     ArrayAdd: 'ArrayAdd',
+    ArrayLength: 'ArrayLength',
 };
 
 export default TokenType;
