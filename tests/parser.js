@@ -26,6 +26,8 @@ class Parser {
                 statements.push(this.parseAsyncStatement());
             } else if (this.currentToken.type === TokenType.DeleteVar) {
                 statements.push(this.deleteVarStatement());
+            } else if (this.currentToken.type === TokenType.DeleteFunc) {
+                statements.push(this.deleteFuncStatement());
             } else if (this.currentToken.type === TokenType.Let || this.currentToken.type === TokenType.Make) {
                 statements.push(this.parseVariableDeclaration());
             } else if (this.currentToken.type === TokenType.Show) {
@@ -111,11 +113,15 @@ class Parser {
     deleteVarStatement() {
         this.expect(TokenType.DeleteVar); // Expect the delete token
         const identifier = this.expect(TokenType.Identifier); // Expect the variable name to delete
-        if (this.currentToken && this.currentToken.type === TokenType.Semicolon) {
-            this.expect(TokenType.Semicolon); // Consume the semicolon if present
-        }
         return { type: 'DeleteVariable', name: identifier.value }; // Return a DeleteVariable statement node
     }    
+
+    deleteFuncStatement() {
+        this.expect(TokenType.DeleteFunc); // We expect the delete function token
+        const identifier = this.expect(TokenType.Identifier);
+
+        return { type: 'DeleteFunction', name: identifier.value };
+    }
 
     peek() {
         // Temporarily store the current token
@@ -195,6 +201,8 @@ class Parser {
                 return this.parseVariableDeclaration();
             case TokenType.DeleteVar:
                 return this.deleteVarStatement();
+            case TokenType.DeleteVar:
+                return this.deleteFuncStatement();
             case TokenType.Show:
                 return this.parsePrintStatement();
             case TokenType.If:

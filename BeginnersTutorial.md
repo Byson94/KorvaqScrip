@@ -27,6 +27,7 @@
    - [Binary Expressions](#binary-expressions)
    - [Function Calls](#function-calls)
 6. [Functions](#functions)
+   - [Delete Functions](#delete-functions)
 7. [Output](#output)
 8. [Comments](#comments)
 9. [Linking Files](#linking-files)
@@ -157,6 +158,43 @@ The `show` keyword is used to print values to the console.
 **Example**:
 ```korvaq
 show "Hello, World!"
+```
+
+## Delete Functions
+We can use the `delfunc` keyword to delete functions from memeory.
+
+**Example**:
+```korvaq
+func a() {
+    show "hi"
+}
+
+a() // outputs "hi"
+
+delfunc a // deletes the function from memory.
+
+a() // this would result in an error!
+```
+
+If there are many functions in the project, then you can use `delfunc all` to delete all functions.
+
+**Example**:
+```korvaq
+func a() {
+    show "hi"
+}
+
+func b() {
+    show "bye"
+}
+
+a() // outputs "hi"
+b() // outputs "bye"
+
+delfunc all // deletes the function from memory.
+
+a() // this would result in an error!
+b() // this would also result in an error!
 ```
 
 ## Expressions

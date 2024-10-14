@@ -135,6 +135,9 @@ class Interpreter {
             case 'DeleteVariable':
                 this.handleDeleteVariable(statement);
                 break;
+            case 'DeleteFunction':
+                this.handleDeleteFunction(statement);
+                break;
             case 'ConnectStatement':
                 this.handleConnect(statement);
                 break;
@@ -240,6 +243,30 @@ class Interpreter {
     
         // Delete the variable from the variables object
         delete this.variables[varName];
+    }
+
+    handleDeleteFunction(statement) {
+        const functionName = statement.name;
+    
+        // Check if the command is to delete all variables
+        if (functionName === 'all') {
+            // Iterate through the variables and delete them
+            for (const key in this.functions) {
+                if (this.functions.hasOwnProperty(key)) {
+                    // Delete the variable
+                    delete this.functions[key];
+                }
+            }
+            return; // Exit the function after deleting all
+        }
+    
+        // Check if function exists
+        if (!this.functions.hasOwnProperty(functionName)) {
+            throw new Error(`Function "${functionName}" is not defined.`);
+        }
+    
+        // Delete the variable from the variables object
+        delete this.functions[functionName];
     }
     
     // Add a new method to access elements in an array

@@ -39,6 +39,7 @@ const TokenType = {
     Comma: 'Comma',
     Boolean: 'Boolean',
     DeleteVar: 'DeleteVar',
+    DeleteFunc: 'DeleteFunc',
     Connect: 'Connect',
     And: 'And', // For &&
     Or: 'Or', // For ||
