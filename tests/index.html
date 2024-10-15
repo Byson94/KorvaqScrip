@@ -139,15 +139,40 @@
     <!-- Script 2: Monaco Editor and KorvaqScrip Syntax -->
     <script src="https://unpkg.com/monaco-editor/min/vs/loader.js"></script>
     <script>
-        let editor; // Declare editor variable in a broader scope
+        let editor;
 
         function createMonacoEditor() {
             require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor/min/vs' }});
             require(['vs/editor/editor.main'], function() {
+                // Define the custom theme
+                monaco.editor.defineTheme('korvaqScripColorTheme', {
+                    base: 'vs-dark',
+                    inherit: true,
+                    rules: [
+                        { token: 'keyword.control.korvaqscrip', foreground: 'FFB3C1' }, 
+                        { token: 'keyword.variable.korvaqscrip', foreground: 'D9D9D9' },
+                        { token: 'keyword.function.korvaqscrip', foreground: 'A8E1B0' },
+                        { token: 'variable.other.korvaqscrip', foreground: 'B3E0EA' },
+                        { token: 'string.quoted.double.korvaqscrip', foreground: 'FFE0B3' },
+                        { token: 'constant.numeric.korvaqscrip', foreground: 'D1B2E0' },
+                        { token: 'comment.line.korvaqscrip', foreground: 'A4B4C1', fontStyle: 'italic' }, 
+                        { token: 'operator.signs.korvaqscrip', foreground: 'FFE0B3' } 
+                    ],
+                    colors: {
+                        'editor.foreground': '#FFFFFF',
+                        'editor.background': '#1E1E1E',
+                        'editorCursor.foreground': '#FFFFFF',
+                        'editor.lineHighlightBackground': '#0000FF20',
+                    }
+                });
+
+                // Apply the custom theme
+                monaco.editor.setTheme('korvaqScripColorTheme');
+
                 editor = monaco.editor.create(document.getElementById('editor'), {
                     value: 'show("Hello, World!");',
                     language: 'korvaqscrip',
-                    theme: 'vs-dark'
+                    theme: 'korvaqScripColorTheme' // Apply your custom theme
                 });
                 defineKorvaqScripLanguage(monaco);
             });
@@ -161,7 +186,7 @@
                 editorContainer.innerHTML = '<div id="editor"></div>';
                 createMonacoEditor();
             } else {
-                editorContainer.innerHTML = '<textarea id="defaultEditor">show("Hello, World!");\nconnect("./main.kq");</textarea>';
+                editorContainer.innerHTML = '<textarea id="defaultEditor">show("Hello, World!");</textarea>';
             }
         }
 
@@ -169,30 +194,52 @@
             await initializeEditor();
         });
 
-        // Define custom language syntax for KorvaqScrip
         function defineKorvaqScripLanguage(monaco) {
             monaco.languages.register({ id: 'korvaqscrip' });
 
             monaco.languages.setMonarchTokensProvider('korvaqscrip', {
                 tokenizer: {
                     root: [
-                        // keywords for KorvaqScrip (including connect)
-                        [/let|make|func|if|else|loop|return|show|connect/, 'keyword'],
-
-                        // operators
-                        [/[=><!~?:&|+\-*\/%]+/, 'operator'],
-
-                        // numbers
-                        [/\b\d+(\.\d+)?\b/, 'number'],
-
-                        // strings
-                        [/\".*?\"/, 'string'],
-
-                        // comments
-                        [/\/\/.*$/, 'comment'],
-
-                        // parentheses and brackets
-                        [/[{}()\[\]]/, '@brackets'],
+                        // Keyword control
+                        {
+                            regex: /\b(if|else|func|read|connect)\b/,
+                            action: { token: 'keyword.control.korvaqscrip' }
+                        },
+                        // Function keyword
+                        {
+                            regex: /\b(show|arrayadd|arraylength)\b/,
+                            action: { token: 'keyword.function.korvaqscrip' }
+                        },
+                        // Variable keywords
+                        {
+                            regex: /\b(make|let|delvar|delfunc)\b/,
+                            action: { token: 'keyword.variable.korvaqscrip' }
+                        },
+                        // Operators
+                        {
+                            regex: /[=><!~?:&|+\-*\/%]+/,
+                            action: { token: 'operator.signs.korvaqscrip' }
+                        },
+                        // Numeric constants
+                        {
+                            regex: /\b\d+(\.\d+)?\b/,
+                            action: { token: 'constant.numeric.korvaqscrip' }
+                        },
+                        // String literals
+                        {
+                            regex: /"[^"]*"/,
+                            action: { token: 'string.quoted.double.korvaqscrip' }
+                        },
+                        // Comments
+                        {
+                            regex: /\/\/.*$/,
+                            action: { token: 'comment.line.korvaqscrip' }
+                        },
+                        // Brackets
+                        {
+                            regex: /[{}()\[\]]/,
+                            action: { token: '@brackets' }
+                        }
                     ]
                 }
             });

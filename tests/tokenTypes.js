@@ -47,6 +47,7 @@ const TokenType = {
     Read: 'Read',
     ArrayAdd: 'ArrayAdd',
     ArrayLength: 'ArrayLength',
+    ArrayRemove: 'ArrayRemove',
 };
 
 export default TokenType;

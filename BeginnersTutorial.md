@@ -255,6 +255,20 @@ arrayadd exampleArray "exampleValue2"
 show exampleArray // output: ["exampleValue","exampleValue2"]
 ```
 
+To remove the values in an array, we can use `arrayremove`
+
+**Example**:
+```korvaq
+let example = ["exampleValue"]
+arrayremove example "exampleValue" // this removes the string value from the array
+
+let example2 = ["exampleValue"]
+arrayremove example2 0 // this removes the index value from the array
+
+show example // outputs []
+show example2 // outputs []
+```
+
 We can also get the length of arrays by using `arraylength`
 
 **Example**:

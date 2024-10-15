@@ -149,8 +149,11 @@ class Interpreter {
             case 'ReadStatement':
                 this.handleReadStatement(statement);
                 break;
-            case 'ArrayAdd':  // New case for adding to an array
+            case 'ArrayAdd':
                 this.addToArray(statement.array, statement.element);
+                break;
+            case 'ArrayRemove':
+                this.removeFromArray(statement.array, statement.element);
                 break;
             case 'ArrayLength':
                 this.lengthOfArray(statement.array);
@@ -292,11 +295,6 @@ class Interpreter {
         // Evaluate the value
         const value = this.evaluate(statement.value);
     
-        // Check if the value is an array
-        if (Array.isArray(value)) {;
-            const uselessvariablethatisherefornoreasonbutjusttoattractpeopleduetoitsmassivelenght = null;
-        }
-    
         // If mutable, assign the new value
         this.variables[statement.name] = value;
     }
@@ -314,11 +312,47 @@ class Interpreter {
         }
     
         // Evaluate the value to be added
-        const evaluatedValue = this.evaluate(value); // Ensure this works correctly
+        const evaluatedValue = this.evaluate(value);
     
         // Push the evaluated value to the array
         array.push(evaluatedValue);
     }    
+
+    removeFromArray(arrayName, value) {
+        // Check if the variable is defined
+        if (!this.variables.hasOwnProperty(arrayName)) {
+            throw new Error(`Array "${arrayName}" is not defined.`);
+        }
+    
+        // Check if the variable is an array
+        const array = this.variables[arrayName];
+        if (!Array.isArray(array)) {
+            throw new Error(`Variable "${arrayName}" is not an array.`);
+        }
+    
+        // Evaluate the value to be removed
+        const evaluatedValue = this.evaluate(value);
+    
+        // Determine the type of the evaluated value
+        if (typeof evaluatedValue === 'number') {
+            if (evaluatedValue < 0 || evaluatedValue >= array.length) {
+                throw new Error(`Index "${evaluatedValue}" is out of bounds.`);
+            }
+            array.splice(evaluatedValue, 1); // Remove the item at the specified index
+        } else if (typeof evaluatedValue === 'string') {
+            // If it's a string, remove the first occurrence of that value
+            const index = array.indexOf(evaluatedValue);
+            if (index !== -1) {
+                array.splice(index, 1); 
+            } else {
+                throw new Error(`Value "${evaluatedValue}" not found in the array.`);
+            }
+        } else {
+            throw new Error(`Unsupported value type. Expected number or string, but received ${typeof evaluatedValue}.`);
+        }
+    }
+    
+    
 
     lengthOfArray(arrayName) {
         if (!this.variables.hasOwnProperty(arrayName)) {
@@ -463,7 +497,7 @@ class Interpreter {
     evaluate(expression) {
         switch (expression.type) {
             case 'NumberLiteral':
-                return expression.value;
+                return Number(expression.value);
             case 'StringLiteral':
                 return expression.value;
             case 'BooleanLiteral':

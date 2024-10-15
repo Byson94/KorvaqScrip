@@ -236,6 +236,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.ArrayAdd };
             case 'arraylength':
                 return { value: idStr, type: TokenType.ArrayLength };
+            case 'arrayremove':
+                return { value: idStr, type: TokenType.ArrayRemove };
             case 'read':
                 return { value: idStr, type: TokenType.Read };
             default:

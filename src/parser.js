@@ -18,6 +18,8 @@ class Parser {
                 statements.push(this.parseConnectStatement());
             } else if (this.currentToken.type === TokenType.ArrayAdd) {
                 statements.push(this.parseArrayAdd());
+            } else if (this.currentToken.type === TokenType.ArrayRemove) {
+                statements.push(this.parseArrayRemove());
             } else if (this.currentToken.type === TokenType.ArrayLength) {
                 statements.push(this.parseArrayLength());
             } else if (this.currentToken.type === TokenType.Read) {  
@@ -44,6 +46,33 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseArrayRemove() {
+        this.expect(TokenType.ArrayRemove); // Expect the ArrayAdd token
+        const arrayIdentifier = this.expect(TokenType.Identifier); // First identifier (array name)
+    
+        // Parse the second argument, which can be an identifier, a string, or a number
+        let element;
+        if (this.currentToken.type === TokenType.Identifier) {
+            const elementIdentifier = this.expect(TokenType.Identifier);
+            element = { type: 'Identifier', value: elementIdentifier.value };
+        } else if (this.currentToken.type === TokenType.String) {
+            const stringLiteral = this.expect(TokenType.String);
+            element = { type: 'StringLiteral', value: stringLiteral.value };
+        } else if (this.currentToken.type === TokenType.Number) {
+            const numberLiteral = this.expect(TokenType.Number);
+            element = { type: 'NumberLiteral', value: numberLiteral.value };
+        } else {
+            throw new Error("Expected Identifier, String, or Number for array element");
+        }
+    
+        // Return an object representing the ArrayAdd operation
+        return { 
+            type: 'ArrayRemove', 
+            array: arrayIdentifier.value, 
+            element: element 
+        };
     }
 
     parseArrayAdd() {
