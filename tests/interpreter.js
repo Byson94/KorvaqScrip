@@ -62,17 +62,17 @@ class Interpreter {
     
     evaluate(value) {
         if (value.type === 'Identifier') {
+            console.log(`Looking up variable: ${value.name}`);
             if (this.localScope?.[value.name] !== undefined) {
-                return this.localScope[value.name]; // Return from local scope
+                return this.localScope[value.name];
             }
             if (this.variables?.[value.name] !== undefined) {
-                return this.variables[value.name]; // Fallback to global variables
+                return this.variables[value.name];
             }
             throw new Error(`Variable "${value.name}" is not defined.`);
         }
-    
-        // Add evaluation logic for other types if needed...
     }
+    
     
     visitIfStatement(node) {
         // Evaluate the condition using the newly added comparisons

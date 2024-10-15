@@ -260,8 +260,6 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
-        } else if (this.currentToken.type === TokenType.Identifier) {
-            value = this.parseAssignmentOrExpression();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } 

@@ -162,37 +162,6 @@ class Lexer {
         if (idStr === 'add' || idStr === 'remove') {
             return { value: idStr, type: TokenType.MethodCall };
         }
-        
-
-        if (idStr === 'random') {
-            this.pos++; // Move past the '('
-            let min, max;
-            if (this.input[this.pos] === ')') {
-                this.pos++; // Move past the ')'
-                return { value: Math.random() * Number.MAX_VALUE, type: TokenType.Number };
-            } else {
-                min = this.readNumber().value;
-                if (this.input[this.pos] === ')') {
-                    this.pos++; // Move past the ')'
-                    return { value: min, type: TokenType.Number };
-                } else {
-                    while (this.pos < this.input.length && /\s/.test(this.input[this.pos])) {
-                        this.pos++; // Move past the whitespace
-                    }
-                    if (this.input[this.pos] === ')') {
-                        this.pos++; // Move past the ')'
-                        return { value: min, type: TokenType.Number };
-                    } else {
-                        max = this.readNumber().value;
-                        this.pos++; // Move past the ')'
-                        if (min >= max) {
-                            throw new Error(`Invalid range: min (${min}) must be less than max (${max}).`);
-                        }
-                        return { value: Math.random() * (max - min) + min, type: TokenType.Number };
-                    }
-                }
-            }
-        }
     
         // Token identification
         switch (idStr) {
@@ -230,8 +199,6 @@ class Lexer {
                 return { value: idStr, type: TokenType.Connect };
             case 'async':
                 return { value: idStr, type: TokenType.Async };
-            case 'random':
-                return { value: idStr, type: TokenType.Random };
             case 'arrayadd':
                 return { value: idStr, type: TokenType.ArrayAdd };
             case 'arraylength':
