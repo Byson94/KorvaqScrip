@@ -158,10 +158,6 @@ class Lexer {
         if (this.restrictedKeywords.has(idStr) && idStr !== 'delvar all') {
             throw new Error(`Restricted keyword used: ${idStr}`);
         }
-
-        if (idStr === 'add' || idStr === 'remove') {
-            return { value: idStr, type: TokenType.MethodCall };
-        }
     
         // Token identification
         switch (idStr) {
