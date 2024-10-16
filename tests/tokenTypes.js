@@ -48,6 +48,7 @@ const TokenType = {
     ArrayAdd: 'ArrayAdd',
     ArrayLength: 'ArrayLength',
     ArrayRemove: 'ArrayRemove',
+    Array: 'Array', // i dont wanna add this
 };
 
 export default TokenType;

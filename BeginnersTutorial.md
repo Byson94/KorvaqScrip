@@ -279,12 +279,14 @@ show  arraylength numbers // output: 5
 // If you want, then you can do "let x = arraylength numbers" to store the length in a variable
 ```
 
-To get the value inside an array, we can use `arrayName[index]` for example:
+To get the value inside an array, we can use `array arrayName[index]` for example:
 ```
 let example = ["banana", "apple", "cherry"]
-let x = example[0] // this would get the value as "banana"
-let x = example[1] // this as "apple"
-let x = example[2] // this as "cherry"
+let x = array example[0] // this would get the value as "banana"
+let x = array example[1] // this as "apple"
+let x = array example[2] // this as "cherry"
+
+// "array" is the keyword that states that you are calling an array and not any variable or other things.
 ```
 
 ## Comments
@@ -399,3 +401,8 @@ It is recommended to use `delvar all;` at the end of a script to clear all decla
 ```korvaq
 delvar all; // Cleans up all declared variables
 ```
+
+***Using delfunc and delfunc all***
+
+Same like `delvar` and `delvar all` use `delfunc` to clean up functions and `delfunc` all to clean up all at once.
+Generally,  it is a good practice to use `delfunc all` at the point where you dont need the functions you used till now of a script.

@@ -16,6 +16,8 @@ class Parser {
                 statements.push(this.parseIfStatement());
             } else if (this.currentToken.type === TokenType.Connect) {  
                 statements.push(this.parseConnectStatement());
+            } else if (this.currentToken.type === TokenType.Array) {
+                statements.push(this.parseArrayAccess());
             } else if (this.currentToken.type === TokenType.ArrayAdd) {
                 statements.push(this.parseArrayAdd());
             } else if (this.currentToken.type === TokenType.ArrayRemove) {
@@ -260,6 +262,8 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Array) {
+            value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } 
@@ -321,25 +325,13 @@ class Parser {
             };
         }
     
-        // Check if the next token is an open bracket (for array access)
-        if (this.currentToken.type === TokenType.OpenBracket) {
-            this.expect(TokenType.OpenBracket); // Consume the '['
-            
-            const index = this.parseExpression(); // Parse the index
-            this.expect(TokenType.CloseBracket); // Consume the ']'
-    
-            return { 
-                type: 'ArrayAccess', 
-                arrayName: identifier.value, 
-                index 
-            };
-        }
-    
-        // If not a function call or array access, it’s an assignment
+        // If not a function call it’s an assignment
         this.expect(TokenType.Equals); // Use `expect` for assignment
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Array) {
+            value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else {
@@ -352,7 +344,24 @@ class Parser {
             value 
         };
     }    
+
+    parseArrayAccess() {
+        this.expect(TokenType.Array)
+        const identifier = this.expect(TokenType.Identifier);
+        
+        if (this.currentToken.type === TokenType.OpenBracket) {
+            this.expect(TokenType.OpenBracket); // Consume the '['
+            
+            const index = this.parseExpression(); // Parse the index
+            this.expect(TokenType.CloseBracket); // Consume the ']'
     
+            return { 
+                type: 'ArrayAccess', 
+                arrayName: identifier.value, 
+                index 
+            };
+        }   
+    }
 
     parsePrintStatement() {
         this.expect(TokenType.Show);
