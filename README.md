@@ -9,6 +9,8 @@
 
 - Files written in KorvaqScrip use the `.kq` extension, keeping things neat and identifiable.
 
+Join our community here: [Discord Server](https://discord.gg/cmBjBZkNPe)
+
 Want to download and use the program? Check out the downloads here:
 **[Windows-Downloads](https://byson94.github.io/KorvaqScript-Site/download/)**
 
