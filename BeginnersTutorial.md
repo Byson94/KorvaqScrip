@@ -247,29 +247,30 @@ Arrays are defined using square brackets (`[]`) and can hold multiple values.
 let numbers = [1, 2, 3, 4, 5]
 ```
 
-We can add values to an array by using `arrayadd` for example:
+In korvaq, an array is called as "arr" in shortform for simplicity.
+We can add values to an array by using `arradd` for example:
 ```
 exampleArray = ["exampleValue"]
-arrayadd exampleArray "exampleValue2"
+arradd exampleArray "exampleValue2"
 
 show exampleArray // output: ["exampleValue","exampleValue2"]
 ```
 
-To remove the values in an array, we can use `arrayremove`
+To remove the values in an array, we can use `arrclear`
 
 **Example**:
 ```korvaq
 let example = ["exampleValue"]
-arrayremove example "exampleValue" // this removes the string value from the array
+arrclear example "exampleValue" // this removes the string value from the array
 
 let example2 = ["exampleValue"]
-arrayremove example2 0 // this removes the index value from the array
+arrclear example2 0 // this removes the index value from the array
 
 show example // outputs []
 show example2 // outputs []
 ```
 
-We can also get the length of arrays by using `arraylength`
+We can also get the length of arrays by using `arrlength`
 
 **Example**:
 ```
@@ -279,14 +280,14 @@ show  arraylength numbers // output: 5
 // If you want, then you can do "let x = arraylength numbers" to store the length in a variable
 ```
 
-To get the value inside an array, we can use `array arrayName[index]` for example:
+To get the value inside an array, we can use `arr arrayName[index]` for example:
 ```
 let example = ["banana", "apple", "cherry"]
-let x = array example[0] // this would get the value as "banana"
-let x = array example[1] // this as "apple"
-let x = array example[2] // this as "cherry"
+let x = arr example[0] // this would get the value as "banana"
+let x = arr example[1] // this as "apple"
+let x = arr example[2] // this as "cherry"
 
-// "array" is the keyword that states that you are calling an array and not any variable or other things.
+// "arr" is the keyword that states that you are calling an array and not any variable or other things.
 ```
 
 ## Comments

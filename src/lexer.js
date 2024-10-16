@@ -183,23 +183,17 @@ class Lexer {
                 return { value: idStr, type: TokenType.Loop };
             case 'while':
                 return { value: idStr, type: TokenType.While };
-            case 'start':
-                return { value: idStr, type: TokenType.Start };
-            case 'end':
-                return { value: idStr, type: TokenType.End };
             case 'run':
                 return { value: idStr, type: TokenType.Run };
-            case 'then':
-                return { value: idStr, type: TokenType.Then };
             case 'connect':
                 return { value: idStr, type: TokenType.Connect };
             case 'async':
                 return { value: idStr, type: TokenType.Async };
-            case 'arrayadd':
+            case 'arradd':
                 return { value: idStr, type: TokenType.ArrayAdd };
-            case 'arraylength':
+            case 'arrlength':
                 return { value: idStr, type: TokenType.ArrayLength };
-            case 'arrayremove':
+            case 'arrclear':
                 return { value: idStr, type: TokenType.ArrayRemove };
             case 'read':
                 return { value: idStr, type: TokenType.Read };
