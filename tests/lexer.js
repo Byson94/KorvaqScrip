@@ -189,11 +189,11 @@ class Lexer {
                 return { value: idStr, type: TokenType.Connect };
             case 'async':
                 return { value: idStr, type: TokenType.Async };
-            case 'arrayadd':
+            case 'arradd':
                 return { value: idStr, type: TokenType.ArrayAdd };
-            case 'arraylength':
+            case 'arrsize':
                 return { value: idStr, type: TokenType.ArrayLength };
-            case 'arrayremove':
+            case 'arrdel':
                 return { value: idStr, type: TokenType.ArrayRemove };
             case 'read':
                 return { value: idStr, type: TokenType.Read };
