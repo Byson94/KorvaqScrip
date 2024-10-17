@@ -161,7 +161,7 @@ show "Hello, World!"
 ```
 
 ## Delete Functions
-We can use the `delfunc` keyword to delete functions from memeory.
+We can use the `delfunc` keyword to delete functions from memory.
 
 **Example**:
 ```korvaq
