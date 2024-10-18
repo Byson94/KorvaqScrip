@@ -164,8 +164,11 @@ class Interpreter {
                 this.lengthOfArray(statement.array);
                 break;
             case 'ArrayAccess':
-                return this.handleArrayAccess(statement); // Return the accessed value
-                
+                return this.handleArrayAccess(statement);
+            case 'ToJSONStatement':
+                this.toJSONStatement(statement);
+            case 'ParseJSONStatement':
+                this.parseJSONStatement(statement)
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
@@ -357,7 +360,27 @@ class Interpreter {
         }
     }
     
-    
+    toJSONStatement(statement) {
+        const holdValue = statement.value;
+        if (holdValue === 'String') {
+            holdValue.type = 'StringLiteral';
+        }
+        const value = this.evaluate(holdValue);
+        let returnValue = JSON.stringify(value)
+
+        return returnValue;
+    }
+
+    parseJSONStatement(statement) {
+        const holdValue = statement.value;
+        if (holdValue === 'String') {
+            holdValue.type = 'StringLiteral';
+        }
+        const value = this.evaluate(holdValue);
+        let returnValue = JSON.parse(value)
+
+        return returnValue;
+    }
 
     lengthOfArray(arrayName) {
         if (!this.variables.hasOwnProperty(arrayName)) {
@@ -541,7 +564,11 @@ class Interpreter {
             case 'ArrayLength':
                 return this.lengthOfArray(expression.array)
             case 'ArrayAccess':
-                return this.handleArrayAccess(expression)
+                return this.handleArrayAccess(expression);
+            case 'ToJSONStatement':
+                return this.toJSONStatement(expression);
+            case 'ParseJSONStatement':
+                return this.parseJSONStatement(expression);
             case 'BinaryExpression':
                 return this.evaluateBinaryExpression(expression);
             case 'FunctionCall':

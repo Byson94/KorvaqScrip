@@ -12,6 +12,10 @@ class Parser {
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.ToJSON) {
+                statements.push(this.parseToJSONStatement());
+            } else if (this.currentToken.type === TokenType.ParseJSON) {
+                statements.push(this.parseParseJSONstatement());
             } else if (this.currentToken.type === TokenType.If) {
                 statements.push(this.parseIfStatement());
             } else if (this.currentToken.type === TokenType.Connect) {  
@@ -201,7 +205,6 @@ class Parser {
             body: functionBody,
         };
     }
-    
 
     parseBlock() {
         const statements = [];
@@ -268,6 +271,10 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.ToJSON) {
+            value = this.parseToJSONStatement();
+        } else if (this.currentToken.type === TokenType.ParseJSON) {
+            value = this.parseParseJSONstatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } 
@@ -336,6 +343,10 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.ToJSON) {
+            value = this.parseToJSONStatement();
+        } else if (this.currentToken.type === TokenType.ParseJSON) {
+            value = this.parseParseJSONstatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else {
@@ -348,6 +359,40 @@ class Parser {
             value 
         };
     }    
+
+    parseToJSONStatement() {
+        this.expect(TokenType.ToJSON);
+        let value
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression();
+        } else if (this.currentToken.type === TokenType.String) {
+            value = this.expect(TokenType.String);
+        } else {
+            throw new Error("Expected Identifier or String for ToJSON conversion.");
+        }
+
+        return { 
+            type: "ToJSONStatement", 
+            value 
+        };
+    }
+
+    parseParseJSONstatement() {
+        this.expect(TokenType.ParseJSON);
+        let value
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression();
+        } else if (this.currentToken.type === TokenType.String) {
+            value = this.expect(TokenType.String);
+        } else {
+            throw new Error("Expected Identifier or String for ToJSON conversion.");
+        }
+
+        return { 
+            type: "ParseJSONStatement", 
+            value 
+        };
+    }
 
     parseArrayAccess() {
         this.expect(TokenType.Array)
@@ -374,8 +419,11 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
-        } 
-        else {
+        } else if (this.currentToken.type === TokenType.ToJSON) {
+            value = this.parseToJSONStatement();
+        } else if (this.currentToken.type === TokenType.ParseJSON) {
+            value = this.parseParseJSONstatement();
+        } else {
             value = this.parseExpression(); // Standard variable assignment
         }
         
@@ -389,8 +437,11 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
-        } 
-        else {
+        } else if (this.currentToken.type === TokenType.ToJSON) {
+            value = this.parseToJSONStatement();
+        } else if (this.currentToken.type === TokenType.ParseJSON) {
+            value = this.parseParseJSONstatement();
+        } else {
             value = this.parseExpression(); // Standard variable assignment
         }
         
@@ -404,8 +455,11 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
-        } 
-        else {
+        } else if (this.currentToken.type === TokenType.ToJSON) {
+            value = this.parseToJSONStatement();
+        } else if (this.currentToken.type === TokenType.ParseJSON) {
+            value = this.parseParseJSONstatement();
+        }else {
             value = this.parseExpression(); // Standard variable assignment
         }
         

@@ -51,6 +51,8 @@ const TokenType = {
     ArrayLength: 'ArrayLength',
     ArrayRemove: 'ArrayRemove',
     Array: 'Array',
+    ToJSON: 'ToJSON',
+    ParseJSON: 'ParseJSON',
 };
 
 export default TokenType;

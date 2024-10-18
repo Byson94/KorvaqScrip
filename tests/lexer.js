@@ -47,7 +47,7 @@ class Lexer {
             if (/\d/.test(currentChar)) {
                 return this.readNumber();
             }
-            if (currentChar === '"' || currentChar === "'") {
+            if (currentChar === '"' || currentChar === "'" || currentChar === "`") {
                 return this.readString(currentChar);
             }
             if (/[a-zA-Z_]/.test(currentChar)) {
@@ -203,6 +203,10 @@ class Lexer {
                 return { value: idStr, type: TokenType.Read };
             case 'array':
                 return { value: idStr, type: TokenType.Array };
+            case 'tojson':
+                return { value: idStr, type: TokenType.ToJSON };
+            case 'parjson':
+                return { value: idStr, type: TokenType.ParseJSON };
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

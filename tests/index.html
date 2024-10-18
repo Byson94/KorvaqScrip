@@ -202,12 +202,12 @@
                     root: [
                         // Keyword control
                         {
-                            regex: /\b(if|else|func|read|connect)\b/,
+                            regex: /\b(if|else|func|read|connect|tojson|parjson)\b/,
                             action: { token: 'keyword.control.korvaqscrip' }
                         },
                         // Function keyword
                         {
-                            regex: /\b(show|arrayadd|arraylength|array)\b/,
+                            regex: /\b(show|arradd|arrsize|arr)\b/,
                             action: { token: 'keyword.function.korvaqscrip' }
                         },
                         // Variable keywords
@@ -227,7 +227,7 @@
                         },
                         // String literals
                         {
-                            regex: /"[^"]*"/,
+                            regex: /["'`][^"'`]*["'`]/,
                             action: { token: 'string.quoted.double.korvaqscrip' }
                         },
                         // Comments
