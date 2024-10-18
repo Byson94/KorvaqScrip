@@ -1,6 +1,9 @@
 # KorvaqScrip
 **KorvaqScrip** is a beginner-friendly programming language that prioritises simplicity and ease of use. With its clean and intuitive syntax, it's designed to help both beginners and experienced developers write efficient code without the hassle of complex rules.
 
+How easy it is you ask??
+[check this out!](https://byson94.github.io/KorvaqScript-Site/syntax-comparison/)
+
 ---
 
 ## Introduction
