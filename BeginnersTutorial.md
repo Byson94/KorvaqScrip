@@ -409,9 +409,6 @@ delvar all; // Cleans up all declared variables
 
 Same like `delvar` and `delvar all` use `delfunc` to clean up functions and `delfunc` all to clean up all at once.
 Generally,  it is a good practice to use `delfunc all` at the point where you dont need the functions you used till now of a script.
-<<<<<<< Updated upstream
-=======
 
 
 So, this is the end of the beginners tutorial, the next tutorial is an advanced tutorial, you can find it here: [link](https://github.com/Byson94/KorvaqScrip/blob/main/AdvancedTutorial.md)
->>>>>>> Stashed changes
