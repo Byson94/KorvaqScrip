@@ -4,6 +4,8 @@ const TokenType = {
     Let: 'Let',
     Make: 'Make',
     Show: 'Show',
+    Error: 'Error',
+    Alert: 'Alert',
     Loop: 'Loop',
     While: 'While',
     Void: 'Void',
@@ -48,7 +50,7 @@ const TokenType = {
     ArrayAdd: 'ArrayAdd',
     ArrayLength: 'ArrayLength',
     ArrayRemove: 'ArrayRemove',
-    Array: 'Array', // i dont wanna add this
+    Array: 'Array',
 };
 
 export default TokenType;

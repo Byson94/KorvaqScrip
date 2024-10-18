@@ -36,6 +36,10 @@ class Parser {
                 statements.push(this.parseVariableDeclaration());
             } else if (this.currentToken.type === TokenType.Show) {
                 statements.push(this.parsePrintStatement());
+            } else if (this.currentToken.type === TokenType.Error) {
+                statements.push(this.parseErrorStatement());
+            } else if (this.currentToken.type === TokenType.Alert) {
+                statements.push(this.parseAlertStatement());
             } else if (this.currentToken.type === TokenType.While) {
                 statements.push(this.parseWhileStatement());
             } else if (this.currentToken.type === TokenType.Loop) {
@@ -376,6 +380,36 @@ class Parser {
         }
         
         return { type: 'PrintStatement', value };
+    }
+
+    parseErrorStatement() {
+        this.expect(TokenType.Error);
+        let value;
+        if (this.currentToken.type === TokenType.Read) {
+            value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
+        } 
+        else {
+            value = this.parseExpression(); // Standard variable assignment
+        }
+        
+        return { type: 'ErrorStatement', value };
+    }
+
+    parseAlertStatement() {
+        this.expect(TokenType.Alert);
+        let value;
+        if (this.currentToken.type === TokenType.Read) {
+            value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
+        } 
+        else {
+            value = this.parseExpression(); // Standard variable assignment
+        }
+        
+        return { type: 'AlertStatement', value };
     }
 
     parseRepeatStatement() {

@@ -179,6 +179,10 @@ class Lexer {
                 return { value: idStr, type: TokenType.Make };
             case 'show':
                 return { value: idStr, type: TokenType.Show };
+            case 'error':
+                return { value: idStr, type: TokenType.Error };
+            case 'alert':
+                return { value: idStr, type: TokenType.Alert };
             case 'loop':
                 return { value: idStr, type: TokenType.Loop };
             case 'while':

@@ -117,6 +117,12 @@ class Interpreter {
             case 'PrintStatement':
                 this.handlePrint(statement);
                 break;
+            case 'ErrorStatement':
+                this.handleError(statement);
+                break;
+            case 'AlertStatement':
+                this.handleAlert(statement);
+                break;
             case 'RepeatStatement':
                 this.handleRepeat(statement);
                 break;
@@ -144,7 +150,6 @@ class Interpreter {
             case 'AsyncBlock':
                 return this.executeAsyncBlock(statement);
             case 'VoidLiteral':
-                console.log('this was triggered!')
                 return 'void'
             case 'ReadStatement':
                 this.handleReadStatement(statement);
@@ -450,6 +455,27 @@ class Interpreter {
         }
     }
      
+    handleError(statement) {
+        const value = this.evaluate(statement.value);
+        if (Array.isArray(value)) {
+            console.log(JSON.stringify(value));
+        } else if (typeof value === 'boolean') {
+            console.log(value);
+        } else {
+            console.error(value);
+        }
+    }
+
+    handleAlert(statement) {
+        const value = this.evaluate(statement.value);
+        if (Array.isArray(value)) {
+            console.log(JSON.stringify(value));
+        } else if (typeof value === 'boolean') {
+            console.log(value);
+        } else {
+            console.warn(value);
+        }
+    }
 
     handleRepeat(statement) {
         // Evaluate the start and end values of the loop
