@@ -35,6 +35,7 @@
 11. [File Management](#file-management)
 12. [Examples](#examples)
 13. [Recommended Approaches](#recommended-approaches)
+14. [Extra notes](#extra-notes)
 
 ## Basic Syntax
 KorvaqScrip uses a clear and readable syntax to facilitate learning. Each statement is generally terminated with a semicolon (`;`), and code blocks are enclosed in braces (`{}`).
@@ -409,6 +410,9 @@ delvar all; // Cleans up all declared variables
 
 Same like `delvar` and `delvar all` use `delfunc` to clean up functions and `delfunc` all to clean up all at once.
 Generally,  it is a good practice to use `delfunc all` at the point where you dont need the functions you used till now of a script.
+
+## Extra notes
+KorvaqScrip omits any semi-colons (;) that come in the way of the script execution. This is why you dont need to use them in your scripts. This is a feature of KorvaqScrip and not a bug. This would also add an extra layer of security to obfuscated codes if we filled with semi-colons. 
 
 
 So, this is the end of the beginners tutorial, the next tutorial is an advanced tutorial, you can find it here: [link](https://github.com/Byson94/KorvaqScrip/blob/main/AdvancedTutorial.md)
