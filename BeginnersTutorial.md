@@ -19,16 +19,17 @@
    - [Mutable Variables](#mutable-variables)
    - [Immutable Variables](#immutable-variables)
    - [Deleting Variables](#deleting-variables)
-4. [Control Structures](#control-structures)
+4. [Output](#output)
+5. [Control Structures](#control-structures)
    - [Conditional Statements](#conditional-statements)
    - [Loops](#loops)
-5. [Expressions](#expressions)
+6. [Expressions](#expressions)
    - [Assignments](#assignments)
    - [Binary Expressions](#binary-expressions)
    - [Function Calls](#function-calls)
-6. [Functions](#functions)
+7. [Functions](#functions)
+   - [Return](#return)
    - [Delete Functions](#delete-functions)
-7. [Output](#output)
 8. [Comments](#comments)
 9. [Linking Files](#linking-files)
 10. [Running Asynchronous](#running-asynchronous)
@@ -103,6 +104,14 @@ Boolean values can be `true` or `false`.
 let isActive = true
 ```
 
+## Output
+The `show` keyword is used to print values to the console.
+
+**Example**:
+```korvaq
+show "Hello, World!"
+```
+
 ## Control Structures
 
 ### Conditional Statements
@@ -147,18 +156,22 @@ Functions are declared using the `func` keyword. They can accept parameters and 
 **Example**:
 ```korvaq
 func addVal(a, b) {
-    returns = a + b
+    show a + b // should output 15
 }
-addVal(5, 10); // result is 15
-show returns
+addVal(5, 10); 
 ```
 
-## Output
-The `show` keyword is used to print values to the console.
+### Return
+We can use the `return` keyword to stop the execution of an function and return a value. 
+We need to use the `call` keyword to call a function inside a variable.
 
 **Example**:
 ```korvaq
-show "Hello, World!"
+func addVal(a, b) {
+    return a + b
+}
+b = call addVal(5, 10); // call keyword being used
+show b // result is 15
 ```
 
 ## Delete Functions
@@ -360,11 +373,11 @@ if (number % 2 == 0) {
 **Example 2**: A function to calculate the sum of two numbers.
 ```korvaq
 func sum(a, b) {
-    returns =  a + b;
+    return a + b
 }
 
-sum(6, 2)
-show returns;
+valueGot = sum(6, 2)
+show valueGot
 
 
 // NOTE: "RETURN" IS A RESTRICTED KEYWORD, THATS WHY I USED "RETURNS"
@@ -375,7 +388,7 @@ show returns;
 let fruits = ["Apple", "Banana", "Cherry"];
 
 loop (i, 0, 2) {
-    show fruits; // Displays all fruits 2 times
+    show fruits // Displays all fruits 2 times
 }
 ```
 
