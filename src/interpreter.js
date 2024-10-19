@@ -218,9 +218,12 @@ class Interpreter {
             }
             this.immutables.add(statement.name);
         }
-    
-        // Assign the evaluated value to the variable
-        this.variables[statement.name] = value;
+
+        if (this.localScope[statement.name]) {
+            this.localScope[statement.name] = value;
+        } else {
+            this.variables[statement.name] = value;
+        }
     }
     
     handleDeleteVariable(statement) {
@@ -310,7 +313,11 @@ class Interpreter {
         const value = this.evaluate(statement.value);
     
         // If mutable, assign the new value
-        this.variables[statement.name] = value;
+        if (this.localScope[statement.name]) {
+            this.localScope[statement.name] = value;
+        } else {
+            this.variables[statement.name] = value;
+        }
     }
     
     addToArray(arrayName, value) {

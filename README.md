@@ -2,7 +2,7 @@
 **KorvaqScrip** is a beginner-friendly programming language that prioritises simplicity and ease of use. With its clean and intuitive syntax, it's designed to help both beginners and experienced developers write efficient code without the hassle of complex rules.
 
 How easy it is you ask??
-[check this out!](https://byson94.github.io/KorvaqScript-Site/syntax-comparison/)
+[check this out!](https://byson94.github.io/KorvaqScrip-Site/syntax-comparison/)
 
 ---
 
@@ -15,7 +15,7 @@ How easy it is you ask??
 Join our community here: **[Discord Server](https://discord.gg/cmBjBZkNPe)**
 
 Want to download and use the program? Check out the downloads here:
-**[Windows-Downloads](https://byson94.github.io/KorvaqScript-Site/download/)**
+**[Windows-Downloads](https://byson94.github.io/KorvaqScrip-Site/download/)**
 
 Want to dive right in? Check out our tutorials here:  
 **[Beginners Tutorial](https://github.com/Byson94/KorvaqScrip/blob/main/BeginnersTutorial.md)**
