@@ -322,7 +322,6 @@ class Parser {
             value = this.parseArrayLength();
         } 
         else {
-            this.parseAssignmentOrExpression()
             value = this.parseExpression(); // Standard variable assignment
         }
     
