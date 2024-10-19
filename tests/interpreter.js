@@ -45,18 +45,16 @@ class Interpreter {
         }
     
         // Execute the function body with the local scope
-        this.executeFunctionBlock(func.body, this.localScope);
+        const returnValue = this.executeFunctionBlock(func.body, this.localScope);
+        return returnValue; // Return the value from the function
     }
-    
-    executeFunctionBlock(body) {
-        for (const statement of body) {
-            this.executeStatement(statement); 
-        }
-    }
-    
-    executeStatement(statement) {
-        if (statement.type === 'PrintStatement') {
-            console.log(this.evaluate(statement.value));
+
+    executeFunctionBlock(statements, localScope) {
+        for (const statement of statements) {
+            if (statement.type === 'ReturnFromFunc') {
+                return this.handleReturnFromFunc(statement)
+            }
+            this.execute(statement, localScope);
         }
     }
     
@@ -72,7 +70,6 @@ class Interpreter {
             throw new Error(`Variable "${value.name}" is not defined.`);
         }
     }
-    
     
     visitIfStatement(node) {
         // Evaluate the condition using the newly added comparisons
@@ -111,6 +108,9 @@ class Interpreter {
             case 'VariableDeclaration':
                 this.handleVariableDeclaration(statement);
                 break;
+            case 'ConnectStatement':
+                this.handleConnect(statement);
+                break;
             case 'Assignment':
                 this.handleAssignment(statement);
                 break;
@@ -135,6 +135,9 @@ class Interpreter {
             case 'FunctionDeclaration':
                 this.handleFunctionDeclaration(statement);
                 break;
+            case 'ReturnFromFunc':
+                this.handleReturnFromFunc(statement);
+                break;
             case 'FunctionCall':
                 this.executeFunctionCall(statement);
                 break;
@@ -143,9 +146,6 @@ class Interpreter {
                 break;
             case 'DeleteFunction':
                 this.handleDeleteFunction(statement);
-                break;
-            case 'ConnectStatement':
-                this.handleConnect(statement);
                 break;
             case 'AsyncBlock':
                 return this.executeAsyncBlock(statement);
@@ -166,9 +166,9 @@ class Interpreter {
             case 'ArrayAccess':
                 return this.handleArrayAccess(statement);
             case 'ToJSONStatement':
-                this.toJSONStatement(statement);
+                return this.toJSONStatement(statement);
             case 'ParseJSONStatement':
-                this.parseJSONStatement(statement)
+                return this.parseJSONStatement(statement)
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
@@ -278,6 +278,12 @@ class Interpreter {
     
         // Delete the variable from the variables object
         delete this.functions[functionName];
+    }
+
+    handleReturnFromFunc(statement) {
+        let returningValue = this.evaluate(statement.name);
+
+        return returningValue
     }
     
     // Add a new method to access elements in an array
@@ -531,15 +537,6 @@ class Interpreter {
     handleReturn(statement) {
         return this.evaluate(statement.value);
     }
-    
-    executeFunctionBlock(statements, localScope) {
-        for (const statement of statements) {
-            if (statement.type === 'ReturnStatement') {
-                return this.handleReturn(statement);
-            }
-            this.execute(statement, localScope);
-        }
-    }
 
     // NOTE: THIS IS THE IMPOSTER WHO MANAGES THE VARIABLES BEHIND THE SCENESE!! DONT BELIEVE THIS CODE! IT TRAPPED ME FOR
     // 8 HRS TRYING TO FIND OUT WHY THE CODE IS LOOKING FOR "THIS.VARIABLES" FIRST. BEWARE YOU NAVIGATOR THE BELOW ONE IS SUS.
@@ -559,7 +556,9 @@ class Interpreter {
                 } else {
                     throw new Error(`Variable "${expression.name}" is not defined.`);
                 }
-            case 'ReadStatement':  // Add handling for ReadStatement
+            case 'ReturnFromFunc':
+                return this.handleReturnFromFunc(expression)
+            case 'ReadStatement': 
                 return this.handleReadStatement(expression);
             case 'ArrayLength':
                 return this.lengthOfArray(expression.array)

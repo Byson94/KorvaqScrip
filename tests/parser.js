@@ -8,10 +8,13 @@ class Parser {
 
     parse() {
         const statements = [];
-    
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.Call) {
+                statements.push(this.parseFunctionCall());
+            } else if (this.currentToken.type === TokenType.Return) {
+                statements.push(this.parseReturnFuncStatement());
             } else if (this.currentToken.type === TokenType.ToJSON) {
                 statements.push(this.parseToJSONStatement());
             } else if (this.currentToken.type === TokenType.ParseJSON) {
@@ -56,6 +59,21 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseReturnFuncStatement() {
+        this.expect(TokenType.Return);
+        let identifier
+        if (this.currentToken.type === TokenType.Identifier) {
+            identifier = this.parseExpression();
+        } else {
+            identifier = this.parseExpression()
+        }
+
+        return {
+            type: 'ReturnFromFunc',
+            name: identifier
+        }
     }
 
     parseArrayRemove() {
@@ -234,30 +252,53 @@ class Parser {
     parseStatement() {
         // Here, ensure you can recognize all statement types, including control flow statements.
         switch (this.currentToken.type) {
+            case TokenType.Func:   // Handle function declaration
+                return this.parseFunctionDeclaration();
+            case TokenType.Return:
+                return this.parseReturnFuncStatement();
+            case TokenType.ToJSON:
+                return this.parseToJSONStatement();
+            case TokenType.ParseJSON:
+                return this.parseParseJSONstatement();
+            case TokenType.If:
+                return this.parseIfStatement();
+            case TokenType.Connect:
+                return this.parseConnectStatement();
+            case TokenType.Array: 
+                return this.parseArrayAccess();
+            case TokenType.ArrayAdd: 
+                return this.parseArrayAdd();
+            case TokenType.ArrayRemove: 
+                return this.parseArrayRemove();
+            case TokenType.ArrayLength: 
+                return this.parseArrayLength();
+            case TokenType.Read:  
+                return this.parseReadStatement();
+            case TokenType.Async:
+                return this.parseAsyncStatement();
+            case TokenType.DeleteVar:
+                return this.deleteVarStatement();
+            case TokenType.DeleteFunc:  // Fixed duplicate case
+                return this.deleteFuncStatement();
             case TokenType.Let:
             case TokenType.Make:
                 return this.parseVariableDeclaration();
-            case TokenType.DeleteVar:
-                return this.deleteVarStatement();
-            case TokenType.DeleteVar:
-                return this.deleteFuncStatement();
             case TokenType.Show:
                 return this.parsePrintStatement();
-            case TokenType.If:
-                return this.parseIfStatement();
+            case TokenType.Error:
+                return this.parseErrorStatement();
+            case TokenType.Alert:
+                return this.parseAlertStatement();
             case TokenType.While:  // Handle while
                 return this.parseWhileStatement();
             case TokenType.Loop:   // Handle loop
                 return this.parseRepeatStatement();
-            case TokenType.Func:   // Handle function declaration
-                return this.parseFunctionDeclaration();
             case TokenType.Identifier:
                 return this.parseAssignmentOrExpression();
             default:
                 throw new Error(`Unexpected statement: ${this.currentToken.value}`);
         }
-    }
-
+    }    
 
     parseVariableDeclaration() {
         const isImmutable = this.currentToken.type === TokenType.Make;
@@ -271,6 +312,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.Call) {
+            value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ToJSON) {
             value = this.parseToJSONStatement();
         } else if (this.currentToken.type === TokenType.ParseJSON) {
@@ -279,6 +322,7 @@ class Parser {
             value = this.parseArrayLength();
         } 
         else {
+            this.parseAssignmentOrExpression()
             value = this.parseExpression(); // Standard variable assignment
         }
     
@@ -343,6 +387,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.Call) {
+            value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ToJSON) {
             value = this.parseToJSONStatement();
         } else if (this.currentToken.type === TokenType.ParseJSON) {
@@ -375,6 +421,38 @@ class Parser {
             type: "ToJSONStatement", 
             value 
         };
+    }
+
+    parseFunctionCall() {
+        this.expect(TokenType.Call)
+        const identifier = this.expect(TokenType.Identifier);
+    
+        // Check if it's a function call (next token is an open parenthesis)
+        if (this.currentToken.type === TokenType.OpenParen) {
+            // Consume the '('
+            this.expect(TokenType.OpenParen); // Use `expect`
+    
+            const args = [];
+            // Parse function arguments (if any)
+            while (this.currentToken.type !== TokenType.CloseParen) {
+                args.push(this.parseExpression());
+                // Ensure the next token is a comma or the close parenthesis
+                if (this.currentToken.type === TokenType.Comma) {
+                    this.expect(TokenType.Comma);
+                } else if (this.currentToken.type === TokenType.CloseParen) {
+                    break; // Exit if it's the closing parenthesis
+                }
+            }
+    
+            // Consume the ')'
+            this.expect(TokenType.CloseParen); // Use `expect`
+    
+            return { 
+                type: 'FunctionCall', 
+                name: identifier.value, 
+                args 
+            };
+        }
     }
 
     parseParseJSONstatement() {
@@ -419,6 +497,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Call) {
+            value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ToJSON) {
             value = this.parseToJSONStatement();
         } else if (this.currentToken.type === TokenType.ParseJSON) {
@@ -435,6 +515,8 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Call) {
+            value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.ToJSON) {
@@ -453,6 +535,8 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Call) {
+            value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.ToJSON) {

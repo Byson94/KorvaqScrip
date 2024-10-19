@@ -19,6 +19,7 @@ Want to download and use the program? Check out the downloads here:
 
 Want to dive right in? Check out our tutorials here:  
 **[Beginners Tutorial](https://github.com/Byson94/KorvaqScrip/blob/main/BeginnersTutorial.md)**
+**[Advanced Tutorial](https://github.com/Byson94/KorvaqScrip/blob/main/AdvancedTutorial.md)**
 
 ---
 

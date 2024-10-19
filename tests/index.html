@@ -152,6 +152,7 @@
                         { token: 'keyword.control.korvaqscrip', foreground: 'FFB3C1' }, 
                         { token: 'keyword.variable.korvaqscrip', foreground: 'D9D9D9' },
                         { token: 'keyword.function.korvaqscrip', foreground: 'A8E1B0' },
+                        { token: 'keyword.call.korvaqscrip', foreground: '#CC3333' },
                         { token: 'variable.other.korvaqscrip', foreground: 'B3E0EA' },
                         { token: 'string.quoted.double.korvaqscrip', foreground: 'FFE0B3' },
                         { token: 'constant.numeric.korvaqscrip', foreground: 'D1B2E0' },
@@ -214,6 +215,11 @@
                         {
                             regex: /\b(make|let|delvar|delfunc)\b/,
                             action: { token: 'keyword.variable.korvaqscrip' }
+                        },
+                        // calls
+                        {
+                            regex: /\b(call|return)\b/,
+                            action: { token: 'keyword.call.korvaqscrip' }
                         },
                         // Operators
                         {

@@ -201,12 +201,16 @@ class Lexer {
                 return { value: idStr, type: TokenType.ArrayRemove };
             case 'read':
                 return { value: idStr, type: TokenType.Read };
-            case 'array':
+            case 'arr':
                 return { value: idStr, type: TokenType.Array };
             case 'tojson':
                 return { value: idStr, type: TokenType.ToJSON };
             case 'parjson':
                 return { value: idStr, type: TokenType.ParseJSON };
+            case 'return':
+                return { value: idStr, type: TokenType.Return }
+            case 'call':
+                return { value: idStr, type: TokenType.Call }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

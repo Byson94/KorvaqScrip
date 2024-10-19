@@ -53,6 +53,8 @@ const TokenType = {
     Array: 'Array',
     ToJSON: 'ToJSON',
     ParseJSON: 'ParseJSON',
+    Return: 'Return',
+    Call: 'Call',
 };
 
 export default TokenType;
