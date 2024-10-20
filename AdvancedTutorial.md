@@ -15,6 +15,8 @@ Welcome to the advanced tutorial of korvaqscrip!
    - [Exponentiation](#exponentiation)
    - [Bitwise XOR](#bitwise-xor)
 4. [Tokenization](#tokenization)
+5. [Upper case and lower case](#upper-case-and-lower-case)
+6. [Reverse](#reverse)
 
 ## Error and alerts
 Like show, we can also show errors and alerts as output. (Useful for webdevelopment)
@@ -151,4 +153,36 @@ b = "Hello, world from korvaq"
 a = tokenize b
 
 show a // output: ["Hello","world","from","korvaq"]
+```
+
+## Upper case and lower case
+KorvaqScrip supports upper case and lower case conversion of texts. For this, you can use `uppercase` keyword to uppercase words and `lowercase` to lower case words.
+
+**Example**:
+```
+let a = "hello, world from korvaq"
+
+show uppercase a // outputs in all caps
+
+let b = "HELLO, WORLD FROM KORVAQ"
+
+show lowercase b
+```
+
+## Reverse
+We can reverse a string or number by using the `reverse` keyword.
+
+**Example**:
+```
+let a = "Hello, world from korvaq"
+
+show reverse a // output: qavrok morf dlrow ,olleH
+
+// now lets try with a number...
+let b = 1234567890
+
+show reverse b // output: 987654321 
+
+// Quick note
+show reverse 0123456789 // this would remove the 0 when reversing because if a 0 comes at the end of a number, it is not considered as a value by the interpreter. So it would remove it. However, if you need the 0 at the end, then you can submit the number as a string like this: "0123456789"
 ```

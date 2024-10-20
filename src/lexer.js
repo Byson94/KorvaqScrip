@@ -105,7 +105,7 @@ class Lexer {
             }            
     
             // Handle binary operators
-            if (['+', '-', '*', '/', '%'].includes(currentChar)) {
+            if (['+', '-', '*', '/', '%', '^'].includes(currentChar)) {
                 return this.readBinaryOperator(currentChar);
             }
     
@@ -223,7 +223,12 @@ class Lexer {
                 return { value: idStr, type: TokenType.Cos }
             case 'tan':
                 return { value: idStr, type: TokenType.Tan }
-
+            case 'tokenize':
+                return { value: idStr, type: TokenType.Tokenize }
+            case 'lowercase':
+                return { value: idStr, type: TokenType.ToLowerCase }
+            case 'uppercase':
+                return { value: idStr, type: TokenType.ToUpperCase }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

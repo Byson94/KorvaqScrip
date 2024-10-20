@@ -225,6 +225,12 @@ class Lexer {
                 return { value: idStr, type: TokenType.Tan }
             case 'tokenize':
                 return { value: idStr, type: TokenType.Tokenize }
+            case 'lowercase':
+                return { value: idStr, type: TokenType.ToLowerCase }
+            case 'uppercase':
+                return { value: idStr, type: TokenType.ToUpperCase }
+            case 'reverse':
+                return { value: idStr, type: TokenType.ReverseFunc }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }
