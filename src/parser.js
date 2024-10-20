@@ -11,6 +11,18 @@ class Parser {
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.Floor) {
+                statements.push(this.parseFloorMath());
+            } else if (this.currentToken.type === TokenType.Round) {
+                statements.push(this.parseRoundMath());
+            } else if (this.currentToken.type === TokenType.SquareRoot) {
+                statements.push(this.parseSquareRootMath());
+            } else if (this.currentToken.type === TokenType.Cos) {
+                statements.push(this.parseCosMath());
+            } else if (this.currentToken.type === TokenType.Sin) {
+                statements.push(this.parseSinMath());
+            } else if (this.currentToken.type === TokenType.Tan) {
+                statements.push(this.parseTanMath());
             } else if (this.currentToken.type === TokenType.Call) {
                 statements.push(this.parseFunctionCall());
             } else if (this.currentToken.type === TokenType.Return) {
@@ -59,6 +71,132 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseFloorMath() {
+        this.expect(TokenType.Floor);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression();
+        } else if (this.currentToken.type === TokenType.Round) {
+            value =  this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value =  this.parseSquareRootMath(); 
+        } else {
+            value = this.expect(TokenType.Number)
+        }
+
+        return {
+            type: 'FloorMath',
+            value
+        }
+    }
+
+    parseRoundMath() {
+        this.expect(TokenType.Round);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value =  this.parseFloorMath(); 
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value =  this.parseSquareRootMath(); 
+        } else {
+            value = this.expect(TokenType.Number)
+        }
+
+        return {
+            type: 'RoundMath',
+            value
+        }
+    }
+
+    parseSquareRootMath() {
+        this.expect(TokenType.SquareRoot);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression()
+        } else if (this.currentToken.type === TokenType.Round) {
+            value =  this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value =  this.parseFloorMath();
+        } else {
+            value = this.expect(TokenType.Number)
+        }
+
+        return {
+            type: 'SqrtMath',
+            value
+        }
+    }
+
+    parseCosMath() {
+        this.expect(TokenType.Cos);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression()
+        } else if (this.currentToken.type === TokenType.Round) {
+            value =  this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value =  this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value =  this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value =  this.parseFloorMath();
+        } else {
+            value = this.expect(TokenType.Number)
+        }
+
+        return {
+            type: 'CosMath',
+            value
+        }
+    }
+
+    parseSinMath() {
+        this.expect(TokenType.Sin);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression()
+        } else if (this.currentToken.type === TokenType.Round) {
+            value =  this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value =  this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value =  this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value =  this.parseFloorMath();
+        } else {
+            value = this.expect(TokenType.Number)
+        }
+
+        return {
+            type: 'SinMath',
+            value
+        }
+    }
+
+    parseTanMath() {
+        this.expect(TokenType.Tan);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression()
+        } else if (this.currentToken.type === TokenType.Round) {
+            value =  this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value =  this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value =  this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value =  this.parseFloorMath();
+        } else {
+            value = this.expect(TokenType.Number)
+        }
+
+        return {
+            type: 'TanMath',
+            value
+        }
     }
 
     parseReturnFuncStatement() {
@@ -295,6 +433,19 @@ class Parser {
                 return this.parseRepeatStatement();
             case TokenType.Identifier:
                 return this.parseAssignmentOrExpression();
+            case TokenType.Floor:
+                return this.parseFloorMath();
+            case TokenType.Round:
+                return this.parseRoundMath();
+            case TokenType.SquareRoot:
+                return this.parseSquareRootMath();
+            case TokenType.Sin:
+                return this.parseSinMath();
+            case TokenType.Cos:
+                return this.parseCosMath();
+            case TokenType.Tan:
+                return this.parseTanMath();
+
             default:
                 throw new Error(`Unexpected statement: ${this.currentToken.value}`);
         }
@@ -312,6 +463,20 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Round) {
+            value = this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value = this.parseSquareRootMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value = this.parseCosMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value = this.parseSinMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value = this.parseTanMath();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ToJSON) {
@@ -386,6 +551,20 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.ArrayLength) {
+            value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Round) {
+            value = this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value = this.parseSquareRootMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value = this.parseCosMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value = this.parseSinMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value = this.parseTanMath();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ToJSON) {
@@ -496,6 +675,18 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Round) {
+            value = this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value = this.parseSquareRootMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value = this.parseCosMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value = this.parseSinMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value = this.parseTanMath();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ToJSON) {
@@ -516,6 +707,18 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Round) {
+            value = this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value = this.parseSquareRootMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value = this.parseCosMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value = this.parseSinMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value = this.parseTanMath();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.ToJSON) {
@@ -538,11 +741,23 @@ class Parser {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Floor) {
+            value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Round) {
+            value = this.parseRoundMath();
+        } else if (this.currentToken.type === TokenType.SquareRoot) {
+            value = this.parseSquareRootMath();
+        } else if (this.currentToken.type === TokenType.Cos) {
+            value = this.parseCosMath();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            value = this.parseSinMath();
+        } else if (this.currentToken.type === TokenType.Tan) {
+            value = this.parseTanMath();
         } else if (this.currentToken.type === TokenType.ToJSON) {
             value = this.parseToJSONStatement();
         } else if (this.currentToken.type === TokenType.ParseJSON) {
             value = this.parseParseJSONstatement();
-        }else {
+        } else {
             value = this.parseExpression(); // Standard variable assignment
         }
         

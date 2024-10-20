@@ -168,10 +168,71 @@ class Interpreter {
             case 'ToJSONStatement':
                 return this.toJSONStatement(statement);
             case 'ParseJSONStatement':
-                return this.parseJSONStatement(statement)
+                return this.parseJSONStatement(statement);
+            case 'FloorMath':
+                return this.handleFloorMathStatement(statement);
+            case 'RoundMath':
+                return this.handleRoundMathStatement(statement);
+            case 'SqrtMath':
+                return this.handleSqrtMathStatement(statement);
+            case 'CosMath':
+                return this.handleCosMathStatement(statement);
+            case 'SinMath':
+                return this.handleSinMathStatement(statement);
+            case 'TanMath':
+                return this.handleTanMathStatement(statement);
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
+    }
+
+    handleFloorMathStatement(statement) {
+        if (statement.value.type === 'Number') {
+            statement.value.type = 'NumberLiteral'
+        }
+        let returningValue = this.evaluate(statement.value);
+        return Math.floor(returningValue);
+    }
+
+    handleRoundMathStatement(statement) {
+        if (statement.value.type === 'Number') {
+            statement.value.type = 'NumberLiteral'
+        }
+        let returningValue = this.evaluate(statement.value);
+        return Math.round(returningValue);
+    }
+
+    handleSqrtMathStatement(statement) {
+        if (statement.value.type === 'Number') {
+            statement.value.type = 'NumberLiteral'
+        }
+        let returningValue = this.evaluate(statement.value);
+        return Math.sqrt(returningValue);
+    }
+
+    handleCosMathStatement(statement) {
+        if (statement.value.type === 'Number') {
+            statement.value.type = 'NumberLiteral'
+        }
+        let returningValue = this.evaluate(statement.value);
+        return Math.cos(returningValue);
+    }
+
+    handleSinMathStatement(statement) {
+        if (statement.value.type === 'Number') {
+            statement.value.type = 'NumberLiteral'
+        }
+        let returningValue = this.evaluate(statement.value);
+        return Math.sin(returningValue);
+    }
+
+
+    handleTanMathStatement(statement) {
+        if (statement.value.type === 'Number') {
+            statement.value.type = 'NumberLiteral'
+        }
+        let returningValue = this.evaluate(statement.value);
+        return Math.tan(returningValue);
     }
 
     handleArrayAccess(statement) {
@@ -565,6 +626,18 @@ class Interpreter {
                 }
             case 'ReturnFromFunc':
                 return this.handleReturnFromFunc(expression)
+            case 'FloorMath':
+                return this.handleFloorMathStatement(expression)
+            case 'RoundMath':
+                return this.handleRoundMathStatement(expression)
+            case 'SqrtMath':
+                return this.handleSqrtMathStatement(expression)
+            case 'CosMath':
+                return this.handleCosMathStatement(expression)
+            case 'SinMath':
+                return this.handleSinMathStatement(expression)
+            case 'TanMath':
+                return this.handleTanMathStatement(expression)
             case 'ReadStatement': 
                 return this.handleReadStatement(expression);
             case 'ArrayLength':

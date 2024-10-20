@@ -211,6 +211,19 @@ class Lexer {
                 return { value: idStr, type: TokenType.Return }
             case 'call':
                 return { value: idStr, type: TokenType.Call }
+            case 'floor':
+                return { value: idStr, type: TokenType.Floor }
+            case 'round':
+                return { value: idStr, type: TokenType.Round }
+            case 'sqrt':
+                return { value: idStr, type: TokenType.SquareRoot }
+            case 'sin':
+                return { value: idStr, type: TokenType.Sin }
+            case 'cos':
+                return { value: idStr, type: TokenType.Cos }
+            case 'tan':
+                return { value: idStr, type: TokenType.Tan }
+
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }
@@ -218,11 +231,30 @@ class Lexer {
 
     readNumber() {
         let numStr = '';
-        while (this.pos < this.input.length && /\d/.test(this.input[this.pos])) {
-            numStr += this.input[this.pos++];
+        let isDecimal = false; // Flag to track if we've encountered a decimal point
+    
+        while (this.pos < this.input.length) {
+            const currentChar = this.input[this.pos];
+    
+            if (/\d/.test(currentChar)) {
+                numStr += currentChar; // Add digit to numStr
+                this.pos++;
+            } else if (currentChar === '.' && !isDecimal) {
+                isDecimal = true; // Mark that we have seen a decimal point
+                numStr += currentChar; // Add decimal point to numStr
+                this.pos++;
+            } else {
+                break; // Exit the loop if we hit a non-digit, non-decimal character
+            }
         }
-        return { value: numStr, type: TokenType.Number };
+    
+        if (numStr.length === 0) {
+            throw new Error('Invalid number format'); // Optional: throw an error if no digits found
+        }
+    
+        return { value: parseFloat(numStr), type: TokenType.Number }; // Return parsed float
     }
+    
 
     readString(quoteType) {
         let str = '';

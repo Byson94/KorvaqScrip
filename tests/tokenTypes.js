@@ -55,6 +55,12 @@ const TokenType = {
     ParseJSON: 'ParseJSON',
     Return: 'Return',
     Call: 'Call',
+    Floor: 'Floor',
+    Round: 'Round',
+    SquareRoot: 'SquareRoot',
+    Cos: 'Cos',
+    Sin: 'Sin',
+    Tan: 'Tan',
 };
 
 export default TokenType;

@@ -291,7 +291,7 @@ We can also get the length of arrays by using `arrsize`
 let  numbers = [1, 2, 3, 4, 5]
 show  arrsize numbers // output: 5
 
-// If you want, then you can do "let x = arraylength numbers" to store the length in a variable
+// If you want, then you can do "let x = arrsize numbers" to store the length in a variable
 ```
 
 To get the value inside an array, we can use `arr arrayName[index]` for example:
