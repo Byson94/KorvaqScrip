@@ -98,6 +98,11 @@ class Lexer {
                 this.pos++;
                 return { value: ',', type: TokenType.Comma };
             }
+
+            if (currentChar === '*' && this.input[this.pos + 1] === '*') {
+                this.pos += 2; // Move past '**'
+                return { value: '**', type: TokenType.BinaryOperator };
+            }            
     
             // Handle binary operators
             if (['+', '-', '*', '/', '%'].includes(currentChar)) {
@@ -112,11 +117,6 @@ class Lexer {
                 return this.readComparisonOperator('<');
             }
 
-            if (currentChar === '*' && this.input[this.pos + 1] === '*') {
-                this.pos += 2; // Move past '**'
-                return { value: '**', type: TokenType.BinaryOperator };
-            }
-    
             // Handle logical operators
             if (currentChar === '&' && this.input[this.pos + 1] === '&') {
                 this.pos += 2; // Move past '&&'
