@@ -12,6 +12,8 @@ Welcome to the advanced tutorial of korvaqscrip!
    - [Sine](#sine)
    - [Cosine](#cosine)
    - [Tangent](#tangent)
+   - [Exponentiation](#exponentiation)
+   - [Bitwise XOR](#bitwise-xor)
 
 ## Error and alerts
 Like show, we can also show errors and alerts as output. (Useful for webdevelopment)
@@ -112,4 +114,28 @@ let angle = 45 * (3.14 / 180); // Convert degrees to radians
 let tangentValue = tan angle; // tangentValue is now approximately 1
 
 show tangentValue // outputs roughly 1 because we didnt use a more precise value for pi
+```
+
+### Exponentiation
+To raise a number to the power of another number, use the `**` keyword.
+
+**Example**:
+```
+let base = 3;
+let exponent = 2;
+let result = base ** exponent; // result is now 9
+
+show result // outputs 9
+```
+
+### Bitwise XOR
+To perform a bitwise XOR operation between two numbers, use the `^` keyword.
+
+**Example**:
+```
+let a = 3; // In binary: 011
+let b = 2; // In binary: 010
+let result = a ^ b; // In binary: 001 (which is 1 in decimal)
+
+show result // outputs 1
 ```

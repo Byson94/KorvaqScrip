@@ -105,7 +105,7 @@ class Lexer {
             }            
     
             // Handle binary operators
-            if (['+', '-', '*', '/', '%'].includes(currentChar)) {
+            if (['+', '-', '*', '/', '%', '^'].includes(currentChar)) {
                 return this.readBinaryOperator(currentChar);
             }
     
