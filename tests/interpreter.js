@@ -181,9 +181,28 @@ class Interpreter {
                 return this.handleSinMathStatement(statement);
             case 'TanMath':
                 return this.handleTanMathStatement(statement);
+            case 'TokenizeSentence':
+                return this.tokenizeSentence(statement);
+
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
+    }
+
+    tokenizeSentence(statement) {
+        if (statement.value.type === 'String') {
+            statement.value.type = 'StringLiteral';
+        }
+    
+        const stringValue = this.evaluate(statement.value);
+    
+        const tokens = stringValue
+            .replace(/[.,!?]/g, '') 
+            .split(/\s+/) 
+            .filter(token => token.length > 0);
+    
+        // Return the array of tokens
+        return tokens;
     }
 
     handleFloorMathStatement(statement) {
@@ -654,6 +673,8 @@ class Interpreter {
                 return this.executeFunctionCall(expression);
             case 'ArrayLiteral':
                 return expression.elements.map(element => this.evaluate(element));
+            case 'TokenizeSentence':
+                return this.tokenizeSentence(expression)
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }

@@ -11,6 +11,8 @@ class Parser {
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.Tokenize) {
+                statements.push(this.parseTokenizeSentence());
             } else if (this.currentToken.type === TokenType.Floor) {
                 statements.push(this.parseFloorMath());
             } else if (this.currentToken.type === TokenType.Round) {
@@ -445,11 +447,27 @@ class Parser {
                 return this.parseCosMath();
             case TokenType.Tan:
                 return this.parseTanMath();
-
+            case TokenType.Tokenize:
+                return this.parseTokenizeSentence();
             default:
                 throw new Error(`Unexpected statement: ${this.currentToken.value}`);
         }
-    }    
+    }   
+    
+    parseTokenizeSentence() {
+        this.expect(TokenType.Tokenize);
+        let value;
+        if (this.currentToken.type === TokenType.Identifier) {
+            value = this.parseExpression()
+        } else {
+            value = this.expect(TokenType.String)
+        }
+
+        return {
+            type: 'TokenizeSentence',
+            value
+        }
+    }
 
     parseVariableDeclaration() {
         const isImmutable = this.currentToken.type === TokenType.Make;
@@ -465,6 +483,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Tokenize) {
+            value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.Floor) {
             value = this.parseFloorMath();
         } else if (this.currentToken.type === TokenType.Round) {
@@ -553,6 +573,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Tokenize) {
+            value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.Floor) {
             value = this.parseFloorMath();
         } else if (this.currentToken.type === TokenType.Round) {
@@ -675,6 +697,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Tokenize) {
+            value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.Floor) {
             value = this.parseFloorMath();
         } else if (this.currentToken.type === TokenType.Round) {
@@ -709,6 +733,8 @@ class Parser {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.Floor) {
             value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.Tokenize) {
+            value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.Round) {
             value = this.parseRoundMath();
         } else if (this.currentToken.type === TokenType.SquareRoot) {
@@ -741,6 +767,8 @@ class Parser {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Tokenize) {
+            value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.Floor) {
             value = this.parseFloorMath();
         } else if (this.currentToken.type === TokenType.Round) {

@@ -14,6 +14,7 @@ Welcome to the advanced tutorial of korvaqscrip!
    - [Tangent](#tangent)
    - [Exponentiation](#exponentiation)
    - [Bitwise XOR](#bitwise-xor)
+4. [Tokenization](#tokenization)
 
 ## Error and alerts
 Like show, we can also show errors and alerts as output. (Useful for webdevelopment)
@@ -138,4 +139,16 @@ let b = 2; // In binary: 010
 let result = a ^ b; // In binary: 001 (which is 1 in decimal)
 
 show result // outputs 1
+```
+
+## Tokenization
+KorvaqScrip supports tokenization of texts which can be useful on various scenarios like ml (machine learning). For this, we can use the `tokenize` keyword.
+
+**Example**:
+```
+let a = "tempvalue"
+b = "Hello, world from korvaq"
+a = tokenize b
+
+show a // output: ["Hello","world","from","korvaq"]
 ```

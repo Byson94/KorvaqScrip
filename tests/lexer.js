@@ -223,7 +223,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.Cos }
             case 'tan':
                 return { value: idStr, type: TokenType.Tan }
-
+            case 'tokenize':
+                return { value: idStr, type: TokenType.Tokenize }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

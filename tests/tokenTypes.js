@@ -61,6 +61,7 @@ const TokenType = {
     Cos: 'Cos',
     Sin: 'Sin',
     Tan: 'Tan',
+    Tokenize: 'Tokenize'
 };
 
 export default TokenType;
