@@ -11,6 +11,8 @@ class Parser {
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.ReverseFunc) {
+                statements.push(this.parseReverseStatement());
             } else if (this.currentToken.type === TokenType.ToLowerCase) {
                 statements.push(this.parseLowerCaseSentence());
             } else if (this.currentToken.type === TokenType.ToUpperCase) {
@@ -77,6 +79,16 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseReverseStatement() {
+        this.expect(TokenType.ReverseFunc);
+        let value = this.parseExpression()
+
+        return {
+            type: 'ReverseThings',
+            value
+        }
     }
 
     parseLowerCaseSentence() {
@@ -487,7 +499,8 @@ class Parser {
                 return this.parseLowerCaseSentence();
             case TokenType.ToUpperCase:
                 return this.parseUpperCaseSentence();
-
+            case TokenType.ReverseFunc:
+                return this.parseReverseStatement();
             default:
                 throw new Error(`Unexpected statement: ${this.currentToken.value}`);
         }
@@ -522,6 +535,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.ReverseFunc) {
+            value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
             value = this.parseLowerCaseSentence();
         } else if (this.currentToken.type === TokenType.ToUpperCase) {
@@ -616,6 +631,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.ReverseFunc) {
+            value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.Tokenize) {
             value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.Floor) {
@@ -740,6 +757,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.ReverseFunc) {
+            value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.Tokenize) {
             value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
@@ -780,6 +799,8 @@ class Parser {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.Floor) {
             value = this.parseFloorMath();
+        } else if (this.currentToken.type === TokenType.ReverseFunc) {
+            value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
             value = this.parseLowerCaseSentence();
         } else if (this.currentToken.type === TokenType.ToUpperCase) {
@@ -816,6 +837,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
+        } else if (this.currentToken.type === TokenType.ReverseFunc) {
+            value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {

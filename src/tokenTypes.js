@@ -64,6 +64,7 @@ const TokenType = {
     Tokenize: 'Tokenize',
     ToLowerCase: 'ToLowerCase',
     ToUpperCase: 'ToUpperCase',
+    ReverseFunc: 'ReverseFunc',
 };
 
 export default TokenType;

@@ -187,10 +187,30 @@ class Interpreter {
                 return this.handleSentenceToLowerCase(statement);
             case 'SentenceToUpperCase':
                 return this.handleSentenceToUpperCase(statement);
+            case 'ReverseThings':
+                return this.handleReverseThings(statement);
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
     }
+
+    handleReverseThings(statement) {
+        const stringValue = this.evaluate(statement.value);
+    
+        // Check if the value is a number or a string
+        const valueToReverse = typeof stringValue === 'number' ? stringValue.toString() : stringValue;
+    
+        // Ensure the input is treated as a string, allowing for leading zeros
+        if (typeof valueToReverse !== 'string') {
+            throw new Error('Expected a string or number to reverse');
+        }
+    
+        // Reverse the string representation
+        const reversedString = valueToReverse.split('').reverse().join('');
+    
+        // Return the reversed string without converting back to a number
+        return reversedString;
+    }    
 
     handleSentenceToUpperCase(statement) {
         if (statement.value.type === 'String') {
@@ -707,7 +727,9 @@ class Interpreter {
             case 'SentenceToUpperCase':
                 return this.handleSentenceToUpperCase(expression);
             case 'SentenceToLowerCase':
-                return this.handleSentenceToLowerCase(expression)
+                return this.handleSentenceToLowerCase(expression);
+            case 'ReverseThings':
+                return this.handleReverseThings(expression);
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }
