@@ -189,10 +189,17 @@ class Interpreter {
                 return this.handleSentenceToUpperCase(statement);
             case 'ReverseThings':
                 return this.handleReverseThings(statement);
+            case 'InputCli':
+                return this.handleInputCli(statement.value);
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
     }
+
+    handleInputCli(question) {
+        const input = prompt(question.value);
+        return input; 
+    }   
 
     handleReverseThings(statement) {
         const stringValue = this.evaluate(statement.value);
@@ -585,6 +592,7 @@ class Interpreter {
                 const statements = parser.parse();
     
                 this.interpret(statements);
+                console.warn('Connect is not fully usable on the web. Consider running it by downloading the interpreter.')
             } catch (error) {
                 throw new Error(`Failed to load and execute file: ${error.message}`);
             }
@@ -730,6 +738,8 @@ class Interpreter {
                 return this.handleSentenceToLowerCase(expression);
             case 'ReverseThings':
                 return this.handleReverseThings(expression);
+            case 'InputCli':
+                return this.handleInputCli(expression.value);
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }

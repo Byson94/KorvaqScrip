@@ -65,6 +65,7 @@ const TokenType = {
     ToLowerCase: 'ToLowerCase',
     ToUpperCase: 'ToUpperCase',
     ReverseFunc: 'ReverseFunc',
+    InputCli: 'InputCli',
 };
 
 export default TokenType;

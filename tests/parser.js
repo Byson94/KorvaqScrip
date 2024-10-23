@@ -11,6 +11,8 @@ class Parser {
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.InputCli) {
+                statements.push(this.parseInputCli());
             } else if (this.currentToken.type === TokenType.ReverseFunc) {
                 statements.push(this.parseReverseStatement());
             } else if (this.currentToken.type === TokenType.ToLowerCase) {
@@ -79,6 +81,22 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseInputCli() {
+        this.expect(TokenType.InputCli);
+        this.expect(TokenType.OpenParen);
+        let value = ""
+        if (this.currentToken.type ===  TokenType.String || this.currentToken.type ===  TokenType.Number || this.currentToken.type ===  TokenType.Identifier ) {
+            value = this.parseExpression()
+        }
+
+        this.expect(TokenType.CloseParen);
+
+        return {
+            type: 'InputCli',
+            value
+        }
     }
 
     parseReverseStatement() {
@@ -501,6 +519,8 @@ class Parser {
                 return this.parseUpperCaseSentence();
             case TokenType.ReverseFunc:
                 return this.parseReverseStatement();
+            case TokenType.InputCli:
+                return this.parseInputCli()
             default:
                 throw new Error(`Unexpected statement: ${this.currentToken.value}`);
         }
@@ -526,7 +546,6 @@ class Parser {
         this.expect(isImmutable ? TokenType.Make : TokenType.Let);
         const name = this.expect(TokenType.Identifier);
         this.expect(TokenType.Equals);
-        
         // Check if the right-hand side is a `read` statement
         let value;
         if (this.currentToken.type === TokenType.Read) {
@@ -535,6 +554,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.InputCli) {
+            value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
             value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
@@ -631,6 +652,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.InputCli) {
+            value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
             value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.Tokenize) {
@@ -759,6 +782,8 @@ class Parser {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
             value = this.parseReverseStatement();
+        } else if (this.currentToken.type === TokenType.InputCli) {
+            value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.Tokenize) {
             value = this.parseTokenizeSentence();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
@@ -803,6 +828,8 @@ class Parser {
             value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
             value = this.parseLowerCaseSentence();
+        } else if (this.currentToken.type === TokenType.InputCli) {
+            value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.ToUpperCase) {
             value = this.parseUpperCaseSentence();
         } else if (this.currentToken.type === TokenType.Tokenize) {
@@ -841,6 +868,8 @@ class Parser {
             value = this.parseReverseStatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.InputCli) {
+            value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.ToLowerCase) {
             value = this.parseLowerCaseSentence();
         } else if (this.currentToken.type === TokenType.ToUpperCase) {

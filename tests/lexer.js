@@ -231,6 +231,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.ToUpperCase }
             case 'reverse':
                 return { value: idStr, type: TokenType.ReverseFunc }
+            case 'getinput': 
+                return { value: idStr, type: TokenType.InputCli }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

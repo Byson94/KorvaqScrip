@@ -17,6 +17,7 @@ Welcome to the advanced tutorial of korvaqscrip!
 4. [Tokenization](#tokenization)
 5. [Upper case and lower case](#upper-case-and-lower-case)
 6. [Reverse](#reverse)
+7. [Getting input](#getting-input)
 
 ## Error and alerts
 Like show, we can also show errors and alerts as output. (Useful for webdevelopment)
@@ -185,4 +186,13 @@ show reverse b // output: 987654321
 
 // Quick note
 show reverse 0123456789 // this would remove the 0 when reversing because if a 0 comes at the end of a number, it is not considered as a value by the interpreter. So it would remove it. However, if you need the 0 at the end, then you can submit the number as a string like this: "0123456789"
+```
+
+## Getting input
+We can get an input from the user using `getinput` this is mainly useful on web enviornments.
+
+**Example**:
+```
+let a = getinput("our question we need to ask...") // if you want you can leave it empty or add a number
+show a
 ```
