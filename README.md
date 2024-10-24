@@ -16,6 +16,7 @@ Join our community here: **[Discord Server](https://discord.gg/cmBjBZkNPe)**
 
 Want to download and use the program? Check out the downloads here:
 **[Windows-Downloads](https://byson94.github.io/KorvaqScrip-Site/download/)**
+If you are stuck on the installation, check out the installation guide here: **[Installation Guide](https://byson94.github.io/KorvaqScrip-Site/use-app/)
 
 Want to dive right in? Check out our tutorials here:  
 **[Beginners Tutorial](https://github.com/Byson94/KorvaqScrip/blob/main/BeginnersTutorial.md)**
