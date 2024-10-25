@@ -4,7 +4,7 @@ Welcome to the advanced tutorial of korvaqscrip!
 ## Table of Contents
 
 1. [Error and alerts](#error-and-alerts)
-2. [JSON](#json)
+2. [JSON](#json-javaScript-object-notation)
 3. [Advanced Math](#advanced-math)
    - [Floor](#floor)
    - [Round](#round)
@@ -32,7 +32,7 @@ alert "This is an alert" // throws an alert
 ## JSON (JavaScript Object Notation)
 KorvaqScrip supports JSON. It would be mainly used in webdevelopment where we have to interact with API's (Application Programming Interface) and other stuff related to webdevelopment. We will get to that later.
 
-Currently KorvaqScrip supports turning something into JSON and turning JSON into something. (This is called serialization and deserialization)
+Currently KorvaqScrip supports turning something (json string) into JSON and turning JSON into something. (This is called serialization and deserialization)
 
 We can use *tojson* to convert to JSON and *parjson* to parse JSON to store somewhere.
 
@@ -46,6 +46,14 @@ let y = parjson obj // converts the value to JSON
 let x = "{JSON: true}" // currently in JSON format
 
 let a = parjson x // we convert the JSON into the variable "a"
+
+// we can also write json like this:
+let a = {
+   "key": "key-1", // `,` is very important here as we are adding a new key below
+   key2: "key-2", // we can also make keys without quotes
+   show: "show", // this key would result in an error as it is a reserved word of the language.
+   "show": "show" // this wouldnt result in an error as we are using quotes for the key.
+} // we just wrote json here! you can convert it to a string using `parjson`
 ```
 
 ## Advanced Math
