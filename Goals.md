@@ -1,5 +1,8 @@
 # Goals of the language
 
 - Make the language be able to run with any language.
-- Make the interpreter fully working and provide the language with maximum features.
-- Switch the interpreter from javascript to c++ or rust for speed.
+- Make c a parent language for maximum speed.
+- Provide maximum ml features for language.
+- Provide library support.
+- Add a tool to convert the language to webassembly.
+- Make the language work with webassembly.

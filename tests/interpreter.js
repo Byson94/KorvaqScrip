@@ -44,19 +44,55 @@ class Interpreter {
             }
         }
     
-        // Execute the function body with the local scope
         const returnValue = this.executeFunctionBlock(func.body, this.localScope);
-        return returnValue; // Return the value from the function
+        return returnValue; 
     }
 
     executeFunctionBlock(statements, localScope) {
         for (const statement of statements) {
             if (statement.type === 'ReturnFromFunc') {
-                return this.handleReturnFromFunc(statement)
+                return this.handleReturnFromFunc(statement);
             }
+
             this.execute(statement, localScope);
+            
+            if (statement.thenBlock) {
+                const result = this.searchStatements(statement.thenBlock);
+                if (result !== undefined) {
+                    return result;
+                }
+            }
+            
+            if (statement.elseBlock) {
+                const result = this.searchStatements(statement.elseBlock);
+                if (result !== undefined) {
+                    return result; 
+                }
+            }
         }
     }
+    
+    searchStatements(statements) {
+        for (const statement of statements) {
+            if (statement.type === 'ReturnFromFunc') {
+                return this.handleReturnFromFunc(statement);
+            }
+    
+            if (statement.thenBlock) {
+                const result = this.searchStatements(statement.thenBlock);
+                if (result !== undefined) {
+                    return result;
+                }
+            }
+    
+            if (statement.elseBlock) {
+                const result = this.searchStatements(statement.elseBlock);
+                if (result !== undefined) {
+                    return result;
+                }
+            }
+        }
+    }    
     
     evaluate(value) {
         if (value.type === 'Identifier') {
