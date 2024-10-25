@@ -227,10 +227,26 @@ class Interpreter {
                 return this.handleReverseThings(statement);
             case 'InputCli':
                 return this.handleInputCli(statement.value);
+            case 'FetchAPI':
+                return this.handleFetchAPis(statement.url.value);
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
     }
+
+    async handleFetchAPis(url) {
+        try {
+            const response = await fetch(url); // Await the fetch call
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json(); // Await the JSON parsing
+            return data; // Return the resolved data
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            throw error; // Optionally rethrow the error for further handling
+        }
+    }    
 
     handleInputCli(question) {
         const input = prompt(question.value);
@@ -694,14 +710,14 @@ class Interpreter {
         // Loop through the range from start to end (inclusive)
         for (let i = start; i <= end; i++) {
             // Set the loop variable in the variables context
-            this.variables[statement.identifier.value] = i;
+            this.variables[statement.identifier] = i;
     
             // Execute the block of code inside the loop
             this.interpret(statement.block);
         }
     
         // Optionally, delete the loop variable after the loop is done
-        delete this.variables[statement.identifier.value];
+        delete this.variables[statement.identifier];
     }
     
     handleWhile(statement) {
@@ -714,12 +730,15 @@ class Interpreter {
         }
     }
 
-    handleReturn(statement) {
-        return this.evaluate(statement.value);
+    evaluateJsonObject(expression) {
+        const result = {};
+        for (const [key, valueExpr] of Object.entries(expression.properties)) {
+            result[key] = this.evaluate(valueExpr); // Evaluate each value expression
+        }
+        return result;
     }
 
-    // NOTE: THIS IS THE IMPOSTER WHO MANAGES THE VARIABLES BEHIND THE SCENESE!! DONT BELIEVE THIS CODE! IT TRAPPED ME FOR
-    // 8 HRS TRYING TO FIND OUT WHY THE CODE IS LOOKING FOR "THIS.VARIABLES" FIRST. BEWARE YOU NAVIGATOR THE BELOW ONE IS SUS.
+    // NOTE: THE CODE BELOW IS REALLY IMPORTANT AND SOMETIMES IF YOU FORGET TO ADD SOMETHING HERE, IT MAY NOT WORK!!
     evaluate(expression) {
         switch (expression.type) {
             case 'NumberLiteral':
@@ -737,19 +756,21 @@ class Interpreter {
                     throw new Error(`Variable "${expression.name}" is not defined.`);
                 }
             case 'ReturnFromFunc':
-                return this.handleReturnFromFunc(expression)
+                return this.handleReturnFromFunc(expression);
+            case 'JsonObject':
+                return this.evaluateJsonObject(expression);
             case 'FloorMath':
-                return this.handleFloorMathStatement(expression)
+                return this.handleFloorMathStatement(expression);
             case 'RoundMath':
-                return this.handleRoundMathStatement(expression)
+                return this.handleRoundMathStatement(expression);
             case 'SqrtMath':
-                return this.handleSqrtMathStatement(expression)
+                return this.handleSqrtMathStatement(expression);
             case 'CosMath':
-                return this.handleCosMathStatement(expression)
+                return this.handleCosMathStatement(expression);
             case 'SinMath':
-                return this.handleSinMathStatement(expression)
+                return this.handleSinMathStatement(expression);
             case 'TanMath':
-                return this.handleTanMathStatement(expression)
+                return this.handleTanMathStatement(expression);
             case 'ReadStatement': 
                 return this.handleReadStatement(expression);
             case 'ArrayLength':
@@ -776,6 +797,8 @@ class Interpreter {
                 return this.handleReverseThings(expression);
             case 'InputCli':
                 return this.handleInputCli(expression.value);
+            case 'FetchAPI':
+                return this.handleFetchAPis(expression.url.value);
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }

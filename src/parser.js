@@ -11,6 +11,8 @@ class Parser {
         while (this.currentToken) {
             if (this.currentToken.type === TokenType.Func) {
                 statements.push(this.parseFunctionDeclaration());
+            } else if (this.currentToken.type === TokenType.Fetch) {
+                statements.push(this.parseFetchstatement());
             } else if (this.currentToken.type === TokenType.InputCli) {
                 statements.push(this.parseInputCli());
             } else if (this.currentToken.type === TokenType.ReverseFunc) {
@@ -81,6 +83,23 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseFetchstatement() {
+        this.expect(TokenType.Fetch);
+        this.expect(TokenType.OpenParen);
+
+        let url;
+        if (this.currentToken.type === TokenType.String) {
+            url = this.parseExpression();
+        }
+
+        this.expect(TokenType.CloseParen);
+
+        return {
+            type: 'FetchAPI',
+            url
+        }
     }
 
     parseInputCli() {
@@ -554,6 +573,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Fetch) {
+            value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.InputCli) {
             value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
@@ -658,6 +679,8 @@ class Parser {
             value = this.parseArrayAccess();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
+        } else if (this.currentToken.type === TokenType.Fetch) {
+            value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.InputCli) {
             value = this.parseInputCli();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
@@ -682,8 +705,6 @@ class Parser {
             value = this.parseToJSONStatement();
         } else if (this.currentToken.type === TokenType.ParseJSON) {
             value = this.parseParseJSONstatement();
-        } else if (this.currentToken.type === TokenType.ArrayLength) {
-            value = this.parseArrayLength();
         } else {
             value = this.parseExpression(); // Standard variable assignment
         }
@@ -784,6 +805,10 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Array) {
+            value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.Fetch) {
+            value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
@@ -826,6 +851,10 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Array) {
+            value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.Fetch) {
+            value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.Floor) {
@@ -868,6 +897,10 @@ class Parser {
         let value;
         if (this.currentToken.type === TokenType.Read) {
             value = this.parseReadStatement();
+        } else if (this.currentToken.type === TokenType.Array) {
+            value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.Fetch) {
+            value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.Call) {
             value = this.parseFunctionCall();
         } else if (this.currentToken.type === TokenType.ReverseFunc) {
@@ -1016,6 +1049,8 @@ class Parser {
             return { type: 'Identifier', name: identifier.value };
         } else if (this.currentToken.type === TokenType.OpenBracket) { // Handle arrays
             return this.parseArray();
+        } else if (this.currentToken.type === TokenType.OpenBrace) {
+            return this.parseJson();
         } else if (this.currentToken.type === TokenType.OpenParen) {
             this.expect(TokenType.OpenParen);
             const expr = this.parseExpression();
@@ -1025,6 +1060,43 @@ class Parser {
         throw new Error(`Unexpected token: ${this.currentToken.value}`);
     }
 
+    parseJson() {
+        this.expect(TokenType.OpenBrace); // Expect the opening brace of the JSON object.
+        const properties = {};
+    
+        while (this.currentToken && this.currentToken.type !== TokenType.CloseBrace) {
+            // Parse the key as a String (allowing true/false as keys)
+            let key;
+            if (this.currentToken.type === TokenType.String) {
+                key = this.expect(TokenType.String).value; // Expect and get the string key
+            } else if (this.currentToken.type === TokenType.Identifier) {
+                // Alternatively, allow identifiers as keys
+                key = this.expect(TokenType.Identifier).value; // Expect and get the identifier key
+            } else {
+                throw new Error(`Unexpected token ${this.currentToken.value} in JSON key`);
+            }
+    
+            // Expect a colon between key and value
+            this.expect(TokenType.Colon);
+    
+            // Parse the value (could be another JSON object, array, or a literal)
+            const value = this.parseExpression(); // Recursively parse the value
+            
+            // Store the key-value pair in the properties object
+            properties[key] = value;
+    
+            // If there's a comma, consume it and continue; otherwise, break the loop
+            if (this.currentToken.type === TokenType.Comma) {
+                this.expect(TokenType.Comma);
+            } else if (this.currentToken.type !== TokenType.CloseBrace) {
+                throw new Error(`Expected ',' or '}', but got ${this.currentToken.value}`);
+            }
+        }
+    
+        this.expect(TokenType.CloseBrace); // Consume the closing brace
+        return { type: 'JsonObject', properties };
+    }    
+    
     parseArray() {
         this.expect(TokenType.OpenBracket);
         const elements = [];

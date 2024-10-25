@@ -25,6 +25,7 @@ const TokenType = {
     LogicalOr: 'LOGICAL_OR',
     AddMethod: 'AddMethod',
     Dot: 'Dot',
+    Colon: 'Colon',
     RemoveMethod: 'RemoveMethod',
     MethodCall: 'MethodCall',
     Not: 'NOT',
@@ -66,6 +67,9 @@ const TokenType = {
     ToUpperCase: 'ToUpperCase',
     ReverseFunc: 'ReverseFunc',
     InputCli: 'InputCli',
+    Fetch: 'Fetch',
+    GET: 'GET',
+    POST: 'POST',
 };
 
 export default TokenType;

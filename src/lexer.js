@@ -76,6 +76,10 @@ class Lexer {
                 this.pos++;
                 continue; // Skip semicolon
             }
+            if (currentChar === ':') {
+                this.pos++;
+                return { value: ':', type: TokenType.Colon };
+            }
             if (currentChar === '{') {
                 this.pos++;
                 return { value: '{', type: TokenType.OpenBrace };
@@ -233,6 +237,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.ReverseFunc }
             case 'getinput': 
                 return { value: idStr, type: TokenType.InputCli }
+            case 'fetch': 
+                return { value: idStr, type: TokenType.Fetch }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }
