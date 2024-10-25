@@ -594,9 +594,15 @@ class Parser {
 
     parseIfStatement() {
         this.consume(TokenType.If);
-        this.consume(TokenType.OpenParen);
+        if (this.currentToken.type === TokenType.OpenParen) {
+            this.consume(TokenType.OpenParen);
+        }
+
         const condition = this.parseExpression();
-        this.consume(TokenType.CloseParen);
+
+        if (this.currentToken.type === TokenType.CloseParen) {
+            this.consume(TokenType.CloseParen);
+        }
         
         this.consume(TokenType.OpenBrace); // Expecting an opening brace
         const thenBlock = this.parseBlock(); // Parse the block of statements for the "then"
@@ -901,7 +907,10 @@ class Parser {
 
     parseRepeatStatement() {
         this.expect(TokenType.Loop);        // 'loop' keyword
-        this.expect(TokenType.OpenParen);   // Opening '('
+
+        if (this.currentToken.type === TokenType.OpenParen) {
+            this.consume(TokenType.OpenParen);
+        }
         
         const identifier = this.expect(TokenType.Identifier); // Loop counter variable
         this.expect(TokenType.Comma);
@@ -910,7 +919,10 @@ class Parser {
         this.expect(TokenType.Comma);
         
         const endValue = this.parseExpression();   // Ending value of loop counter
-        this.expect(TokenType.CloseParen);         // Closing ')'
+
+        if (this.currentToken.type === TokenType.CloseParen) {
+            this.consume(TokenType.CloseParen);
+        }       // Closing ')'
         
         // Expect '{' to begin the loop block
         this.expect(TokenType.OpenBrace);          
@@ -932,10 +944,16 @@ class Parser {
     
     parseWhileStatement() {
         this.expect(TokenType.While);           // Expect 'while' keyword
-        this.expect(TokenType.OpenParen);        // Expect '('
+        
+        if (this.currentToken.type === TokenType.OpenParen) {
+            this.consume(TokenType.OpenParen);
+        }     // Expect '('
         
         const condition = this.parseExpression(); // Parse the condition expression
-        this.expect(TokenType.CloseParen);        // Expect ')'
+
+        if (this.currentToken.type === TokenType.CloseParen) {
+            this.consume(TokenType.CloseParen);
+        }        // Expect ')'
 
         this.expect(TokenType.OpenBrace);  
         

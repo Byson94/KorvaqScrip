@@ -694,14 +694,14 @@ class Interpreter {
         // Loop through the range from start to end (inclusive)
         for (let i = start; i <= end; i++) {
             // Set the loop variable in the variables context
-            this.variables[statement.identifier.value] = i;
+            this.variables[statement.identifier] = i;
     
             // Execute the block of code inside the loop
             this.interpret(statement.block);
         }
     
         // Optionally, delete the loop variable after the loop is done
-        delete this.variables[statement.identifier.value];
+        delete this.variables[statement.identifier];
     }
     
     handleWhile(statement) {
