@@ -4,6 +4,7 @@ class Interpreter {
         this.immutables = new Set();  // Track immutable variables
         this.functions = {};  // Store functions
         this.localScope = {};  // Local variables during function execution
+        this.returningFromFunc = false;
     }
 
     isNode() {
@@ -49,94 +50,43 @@ class Interpreter {
     }
 
     executeFunctionBlock(statements, localScope) {
-        let finalResult; // This will hold the result to be returned
-        let returnFound = false; // Flag to check if a return was found
-    
         for (const statement of statements) {
-            // Handle return statement explicitly
             if (statement.type === 'ReturnFromFunc') {
-                finalResult = this.handleReturnFromFunc(statement);
-                returnFound = true;
-                break; 
-            }
-    
-            // Execute the current statement
-            this.execute(statement, localScope);
-            
-            // Check for if-else statements
-            if (statement.type === 'IfStatement') {
-                if (this.evaluate(statement.condition, localScope)) {
-                    finalResult = this.searchStatements(statement.thenBlock);
-                } else if (statement.elseBlock) {
-                    finalResult = this.searchStatements(statement.elseBlock);
-                }
-    
-                if (finalResult !== undefined) {
-                    returnFound = true;
-                    break; 
-                }
+                return this.handleReturnFromFunc(statement);
             }
 
-            if (statement.type === 'IfStatement') {
-                if (this.evaluate(statement.condition, localScope)) {
-                    finalResult = this.searchStatements(statement.thenBlock);
-                } else if (statement.elseBlock) {
-                    finalResult = this.searchStatements(statement.elseBlock);
+            this.execute(statement, localScope);
+            
+            if (statement.thenBlock) {
+                const result = this.searchStatements(statement.thenBlock);
+                if (result !== undefined) {
+                    return result;
                 }
-    
-                if (finalResult !== undefined) {
-                    returnFound = true;
-                    break; 
+            }
+            
+            if (statement.elseBlock) {
+                const result = this.searchStatements(statement.elseBlock);
+                if (result !== undefined) {
+                    return result; 
                 }
             }
         }
-        return returnFound ? finalResult : undefined; 
     }
     
     searchStatements(statements) {
-        let returnValue; 
-    
-        for (const statement of statements) {
-            // Check for a return statement and handle it
-            if (statement.type === 'ReturnFromFunc') {
-                returnValue = this.handleReturnFromFunc(statement);
-                break;
-            }
-    
-            // Check for if statements
-            if (statement.type === 'IfStatement') {
-                if (this.evaluate(statement.condition, this.localScope)) {
-                    returnValue = this.searchStatements(statement.thenBlock);
-                } else if (statement.elseBlock) {
-                    returnValue = this.searchStatements(statement.elseBlock);
-                }
-                if (returnValue !== undefined) {
-                    break; 
-                }
-            }
-    
-            // Handle RepeatStatement
-            if (statement.type === 'RepeatStatement') {
-                do {
-                    returnValue = this.searchStatements(statement.block);
-                } while (this.evaluate(statement.condition, this.localScope));
-                if (returnValue !== undefined) {
-                    break;
-                }
-            }
-    
-            // Handle WhileStatement
-            if (statement.type === 'WhileStatement') {
-                while (this.evaluate(statement.condition, this.localScope)) {
-                    returnValue = this.searchStatements(statement.block);
-                    if (returnValue !== undefined) {
-                        break; 
-                    }
+        if (this.returningFromFunc === true) {
+            for (const statement of statements) {
+                if (statement.type === 'ReturnFromFunc') {
+                    this.returningFromFunc = false;
+                    return this.handleReturnFromFunc(statement);
                 }
             }
         }
-    
-        return returnValue;
+        // for (const statement of statements) { 
+        //     if (statement.type === 'ReturnFromFunc') {
+        //         return this.handleReturnFromFunc(statement);
+        //     }
+        // }
     }    
     
     evaluate(value) {
@@ -519,6 +469,7 @@ class Interpreter {
     handleReturnFromFunc(statement) {
         let returningValue = this.evaluate(statement.name);
 
+        this.returningFromFunc = true;
         return returningValue
     }
     
