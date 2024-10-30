@@ -59,10 +59,14 @@ class Lexer {
                 this.pos++;
                 if (this.input[this.pos] === '=') {
                     this.pos++;
-                    return { value: '==', type: TokenType.Equals }; // Handle equality
+                    if (this.input[this.pos] === '=') { // Check for strict equality
+                        this.pos++;
+                        return { value: '===', type: TokenType.Equals }; // Handle strict equality
+                    }
+                    return { value: '==', type: TokenType.Equals }; // Handle loose equality
                 }
                 return { value: '=', type: TokenType.Equals }; // Assignment
-            }
+            }            
             if (currentChar === '(') {
                 this.pos++;
                 return { value: '(', type: TokenType.OpenParen };
@@ -239,6 +243,8 @@ class Lexer {
                 return { value: idStr, type: TokenType.InputCli }
             case 'fetch': 
                 return { value: idStr, type: TokenType.Fetch }
+            case 'currentTime': 
+                return { value: idStr, type: TokenType.CurrentTime }
             default:
                 return { value: idStr, type: TokenType.Identifier };
         }

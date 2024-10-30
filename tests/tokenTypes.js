@@ -70,6 +70,7 @@ const TokenType = {
     Fetch: 'Fetch',
     GET: 'GET',
     POST: 'POST',
+    CurrentTime: 'CurrentTime',
 };
 
 export default TokenType;

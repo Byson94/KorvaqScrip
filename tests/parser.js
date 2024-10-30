@@ -13,6 +13,8 @@ class Parser {
                 statements.push(this.parseFunctionDeclaration());
             } else if (this.currentToken.type === TokenType.Fetch) {
                 statements.push(this.parseFetchstatement());
+            } else if (this.currentToken.type === TokenType.CurrentTime) {
+                statements.push(this.parseCurrentTimestatement());
             } else if (this.currentToken.type === TokenType.InputCli) {
                 statements.push(this.parseInputCli());
             } else if (this.currentToken.type === TokenType.ReverseFunc) {
@@ -83,6 +85,13 @@ class Parser {
         }
     
         return statements;
+    }
+
+    parseCurrentTimestatement() {
+        this.expect(TokenType.CurrentTime);
+        return {
+            type: "returnCurrentTime"
+        }
     }
 
     parseFetchstatement() {
@@ -571,6 +580,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.CurrentTime) {
+            value = this.parseCurrentTimestatement()
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.Fetch) {
@@ -677,6 +688,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.CurrentTime) {
+            value = this.parseCurrentTimestatement()
         } else if (this.currentToken.type === TokenType.ArrayLength) {
             value = this.parseArrayLength();
         } else if (this.currentToken.type === TokenType.Fetch) {
@@ -807,6 +820,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.CurrentTime) {
+            value = this.parseCurrentTimestatement()
         } else if (this.currentToken.type === TokenType.Fetch) {
             value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.ArrayLength) {
@@ -853,6 +868,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.CurrentTime) {
+            value = this.parseCurrentTimestatement()
         } else if (this.currentToken.type === TokenType.Fetch) {
             value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.Call) {
@@ -899,6 +916,8 @@ class Parser {
             value = this.parseReadStatement();
         } else if (this.currentToken.type === TokenType.Array) {
             value = this.parseArrayAccess();
+        } else if (this.currentToken.type === TokenType.CurrentTime) {
+            value = this.parseCurrentTimestatement();
         } else if (this.currentToken.type === TokenType.Fetch) {
             value = this.parseFetchstatement();
         } else if (this.currentToken.type === TokenType.Call) {
@@ -1023,7 +1042,7 @@ class Parser {
             this.currentToken.type === TokenType.LessThan ||
             this.currentToken.type === TokenType.LessThanOrEqual ||
             this.currentToken.type === TokenType.LogicalAnd ||
-            this.currentToken.type === TokenType.LogicalOr
+            this.currentToken.type === TokenType.LogicalOr 
         )) {
             const operator = this.currentToken;
             this.expect(operator.type); // Consume the operator
@@ -1051,6 +1070,10 @@ class Parser {
             return this.parseArray();
         } else if (this.currentToken.type === TokenType.OpenBrace) {
             return this.parseJson();
+        } else if (this.currentToken.type === TokenType.CurrentTime) {
+                return this.parseCurrentTimestatement();
+        } else if (this.currentToken.type === TokenType.Sin) {
+            return this.parseSinMath();
         } else if (this.currentToken.type === TokenType.OpenParen) {
             this.expect(TokenType.OpenParen);
             const expr = this.parseExpression();

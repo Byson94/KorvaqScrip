@@ -1,3 +1,5 @@
+import TokenType from './tokenTypes.js';
+
 class Interpreter {
     constructor() {
         this.variables = {};  // Store values
@@ -88,20 +90,7 @@ class Interpreter {
         //     }
         // }
     }    
-    
-    evaluate(value) {
-        if (value.type === 'Identifier') {
-            console.log(`Looking up variable: ${value.name}`);
-            if (this.localScope?.[value.name] !== undefined) {
-                return this.localScope[value.name];
-            }
-            if (this.variables?.[value.name] !== undefined) {
-                return this.variables[value.name];
-            }
-            throw new Error(`Variable "${value.name}" is not defined.`);
-        }
-    }
-    
+
     visitIfStatement(node) {
         // Evaluate the condition using the newly added comparisons
         const conditionResult = this.evaluate(node.condition);
@@ -224,9 +213,15 @@ class Interpreter {
                 return this.handleInputCli(statement.value);
             case 'FetchAPI':
                 return this.handleFetchAPis(statement.url.value);
+            case 'returnCurrentTime':
+                return this.handleReturnCurrentTime();
             default:
                 throw new Error(`Unknown statement type: ${statement.type}`);
         }
+    }
+
+    handleReturnCurrentTime() {
+        return Date.now()
     }
 
     async handleFetchAPis(url) {
@@ -347,7 +342,6 @@ class Interpreter {
         let returningValue = this.evaluate(statement.value);
         return Math.sin(returningValue);
     }
-
 
     handleTanMathStatement(statement) {
         if (statement.value.type === 'Number') {
@@ -795,6 +789,8 @@ class Interpreter {
                 return this.handleInputCli(expression.value);
             case 'FetchAPI':
                 return this.handleFetchAPis(expression.url.value);
+            case 'returnCurrentTime':
+                return this.handleReturnCurrentTime();
             default:
                 throw new Error(`Unknown expression type: ${expression.type}`);
         }

@@ -1,0 +1,9 @@
+func greetcall() {
+    make a = tan 2
+    make b = sin 2
+    make c = sqrt 2 
+    show a +  b + c
+    show reverse "hi"
+}
+
+greetcall()
