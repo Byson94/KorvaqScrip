@@ -1,4 +1,4 @@
-// translation from js to rs taking place
+// translation from js to rs taking place.
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum TokenType {
