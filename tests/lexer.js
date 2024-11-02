@@ -195,8 +195,6 @@ class Lexer {
                 return { value: idStr, type: TokenType.Loop };
             case 'while':
                 return { value: idStr, type: TokenType.While };
-            case 'run':
-                return { value: idStr, type: TokenType.Run };
             case 'connect':
                 return { value: idStr, type: TokenType.Connect };
             case 'async':
