@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::str::FromStr;
 use crate::token_type::TokenType;
 
 #[derive(Debug, Clone)]

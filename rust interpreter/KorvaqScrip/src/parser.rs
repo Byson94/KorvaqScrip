@@ -1,6 +1,5 @@
 use crate::ast::ASTNode;
 use crate::token_type::TokenType;
-use serde_json::Value::Number;
 use crate::lexer::{Lexer, Token};
 
 pub struct Parser<'a> {

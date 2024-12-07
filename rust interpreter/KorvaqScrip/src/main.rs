@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             continue;
         }
 
-        let mut lexer = Lexer::new(input);
+        let lexer = Lexer::new(input);
         let mut parser = Parser::new(lexer);
 
         // Parse the input and handle errors
